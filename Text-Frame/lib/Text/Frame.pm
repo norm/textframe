@@ -4,18 +4,15 @@ use strict;
 use warnings;
 
 use Class::Trigger;
-use Module::Pluggable   require => 1,
-                        search_path => 'Text::Frame';
-
 use IO::All -utf8;
 use Readonly;
-
+    Readonly my $CLASS_PREFIX => 'Text::Frame::';
+    
+use Module::Pluggable   require => 1,
+                        search_path => "Text::Frame";
 
 use Data::Dumper;
 
-
-# TODO
-#   *   order the plugins
 
 
 sub new {
@@ -33,17 +30,17 @@ sub new {
     if ( defined $file ) {
         my $io = io $file;
         $self->set_string( $io->all );
-        undef $args{'file'};
+        delete $args{'file'};
     }
     
     foreach my $arg ( keys %args ) {
-        print "-> $arg\n";
         $self->{$arg} = $args{$arg};
     }
     
-    foreach my $plugin ( $self->plugins() ) {
+    foreach my $plugin ( $self->sorted_plugins() ) {
+        $plugin = "${CLASS_PREFIX}${plugin}";
+        print "** $plugin\n";
         if ( $plugin->can( 'initialise' ) ) {
-            print "** $plugin\n";
             $plugin->initialise( $self );
         }
     }
@@ -82,46 +79,77 @@ sub decode_string {
         ^
         (                   # the whole block (for later replacement)
             (?:
-                \s* \n      # skip leading whitespace
+                \s* \n      # skip optional leading whitespace
             )*
             (
                 .*?         # capture anything
             )
-            \n              # up to a newline...
+            \s* \n          # up to a newline...
             (?:
                 \s* \n      # ...followed by at least one blank line
             )+
         )
-    }x;
+    }xs;
     
     $string .= "\n\n";      # ensure we can match the final block
     while ( $string =~ $decode_block ) {
         my $match = $1;
         my $block = $2;
         
-        my $type  = $self->get_trigger_return( 'detect_block', $block );
-        # $self->call_trigger( 'detect_block', $block, \$type );
+        print "BLOCK\n$block\n";
+        
+        my $type  = $self->get_trigger_return( 
+                        'detect_block', 
+                        $block, 
+                        \@blocks 
+                    );
         
         print "TYPE $type\n";
-        # print Dumper $self->last_trigger_results();
-        
-        # foreach my $type ( @BLOCK_TYPES ) {
-        #     no strict 'refs';
-        #     
-        #     my $sub = "Text::Frame::${type}::new";
-        #     my $block = &{ $sub }( 'block' => $block );
-        #     print Dumper $block;
-        # }
-        
-        print "-- BLOCK:\n$block\n";
         
         substr $string, 0, length $match, '';
     }
-    
-    # print "** STRING **\n$string\n-- STRING --\n";
+    print "REMAINING\n$string";
+    exit;
 }
 
 
+
+sub sorted_plugins {
+    my $self = shift;
+    
+    my %sorted_plugins;
+    my @plugins = $self->plugins();
+    
+    foreach my $plugin ( @plugins ) {
+        my @before;
+        my @after;
+        
+        {
+            no strict 'refs';
+            @before = @{"${plugin}::plugin_before"};
+            @after  = @{"${plugin}::plugin_after"};
+        }
+        
+        $plugin =~ s{ $CLASS_PREFIX }{}x;
+        foreach my $before ( @before ) {
+            $sorted_plugins{$plugin}{$before} = 1;
+        }
+        foreach my $after ( @after ) {
+            $sorted_plugins{$after}{$plugin}  = 1;
+        }
+    }
+    
+    return sort {
+            my $a_before_b =  defined $sorted_plugins{$a}{$b} 
+                           || defined $sorted_plugins{'*'}{$b};
+            my $b_before_a =  defined $sorted_plugins{$b}{$a} 
+                           || defined $sorted_plugins{'*'}{$a};
+            
+            return -1 if $a_before_b;
+            return  1 if $b_before_a;
+            return  0;
+        } @plugins;
+}
 sub get_trigger_return {
     my $self    = shift;
     my $trigger = shift;
@@ -138,37 +166,5 @@ sub get_trigger_return {
     }
     return;
 }
-
-
-
-# sub from_file {
-#     my $self = shift;
-#     my $file = shift;
-#     
-#     # TODO add error checking
-#     my $io = io $file;
-#     $self->set_string( $io->all );
-# }
-# 
-# 
-# 
-# sub as_html {
-#     my $self = shift;
-#     
-#     
-#     # foreach my $block ( $self->get_blocks() ) {
-#     #     
-#     # }
-#     
-#     my $string = $self->get_string();
-#     print $string;
-#     
-#     # print Dumper $self;
-#     # 
-#     # # print "ARGH!\n";
-#     # exit 1;
-# }
-
-
 
 1;
