@@ -1,0 +1,176 @@
+The textframe file format
+
+
+    Basic structural information
+    
+    
+        End of line characters
+        
+        End of line characters in a textframe document can be DOS (line
+        feed and carriage returns), Unix (line feed only) or Mac OS Classic
+        (carriage return only) style. Generated textframe documents will be
+        output with Unix linefeeds only.
+    
+        
+        White space
+    
+        White space in blocks of content is recognised to be spaces, tabs
+        and end of line characters. Other white space is treated as 
+        content.
+    
+        
+        Line length
+    
+        There is no defined limit on line lengths for textframe input. 
+        Generated documents will be wrapped at 78 characters.
+    
+        
+        Blocks
+        
+        Blocks of content are high-level structural objects, such as
+        paragraphs, lists and headers. They are separated by a minimum of
+        one blank line (although it can contain white space). Multiple 
+        blank lines can be used for visual separation in the source document
+        but this does not influence the document structure, except in the 
+        case of hinting headings (see below).
+    
+        
+        Indentation
+        
+        Indentation is measured in virtual tab stops which are four 
+        characters across.
+        
+        
+    Types of block content
+    
+    
+        Paragraph
+        
+        Paragraphs are the basic building block of any lightweight markup
+        language, as well as most of the content that textframe is ideally
+        suited to managing.
+        
+        Any block which has no structural markers is treated as a paragraph.
+        Paragraphs must be indented by a minimum of two stops (ie. by
+        eight spaces).
+        
+        
+        Heading
+        
+        Headings are indicated by short text on a line by itself. Indentation
+        controls the level of heading, so:
+        
+    1.  a first level of heading is flush to the left of the document
+    
+    2.  a second level heading is one stop in, at four spaces
+    
+    3.  a third level heading is two stops in (and so on...)
+        
+        It is possible for the parser to confuse short paragraphs with 
+        headings. Therefore the following hints are built into the parser
+        to enable auto-detection of headers:
+        
+    *   if the header is a single line and it does not end in any common 
+        end-of-sentence punctuation
+        
+    *   if the header is followed by multiple dashes (-) to form a ruled line
+    
+    *   if the header was preceded by multiple blank lines as separators
+    
+    *   if the first and last characters in the block are matching dashes
+        (-) or equals (=) symbols
+        
+        
+        Bulleted lists
+        
+        Bulleted lists are indicated by prefixing each list item with a
+        symbol followed by an indent. First-level lists have their symbols
+        at the first stop, so the bullets are hanging.
+        
+    >   From [Mark Boulton's Five Simple Steps]:
+    >   With hanging punctuation the flow of text on the left hand side is
+    >   uninterrupted. The bullets, glyphs or numbers sit in the gutter to
+    >   highlight the list. This representation of a list is more sophisticated
+    >   visually and more legible.
+        
+        The bullet symbol is one of:
+        
+    *   an asterisk (*)
+    
+    *   a lowercase letter O (o)
+    
+    *   a period (.)
+    
+    *   a hyphen (-)
+    
+        The symbol used does not affect the document in any way. Generated
+        textframe documents will always use an asterisk.
+        
+        
+        Numbered lists
+        
+        Numbered lists are indicated the same as bulleted lists, except that
+        the symbol is either:
+        
+    *   a number followed by a period (.) to declare the number of that item
+    
+    *   a hash symbol (#) to have the number automatically incremented
+    
+        If the first item is a #, it is treated as 1. A list where the first
+        item is a number that is not 1 will inform the parser that the list
+        starts at that number and not at 1. All other numbers in the list are
+        ignored (treated identically to #).
+
+
+        Extended quotations
+        
+        A quotation which covers one or more blocks of content is indicated 
+        by prefixing the blocks with a greater-than symbol (>) one indent
+        back, like list markers.
+        
+/*      TODO:
+ *      Need to explain how citations work for block comments.
+ */
+    
+        
+        Comments
+        
+        Comments are included in the document in two ways.
+        
+        
+            Ignored comments
+            
+        Ignored comments are text in the source document that should not
+        be parsed and used to output other formats. This could conceivably 
+        include document metadata, prose that is still in draft, notes to 
+        the author, et cetera. Ignored comment blocks are started with
+        the marker slash-star (/*) and end with star-slash (*/). 
+        
+        The start marker cannot be indented at all, and the end marker can be
+        indented by one optional space. This is so that any ActionScript, C,
+        CSS, JavaScript, PHP etc. comments included in the text are not
+        accidentally parsed as textframe comments.
+        
+        
+            Included comments
+        
+        An included comment is some text that should by preserved in the 
+        textframe output, either as another included comment or in HTML
+        by surrounding it with <!-- and --> markers. Included comments are
+        blocks of text which are prefixed with a hash symbol (#) one indent 
+        back, like list markers.
+        
+        
+        Code blocks
+        
+/*      TODO:
+ *      Decide how to differentiate a pre-formatted code block from a 
+ *      normal paragraph, and how to indicate the language it is in.
+ */
+
+
+
+[Mark Boulton's Five Simple Steps][
+    http://www.markboulton.co.uk/journal/comments/
+    five_simple_steps_to_better_typography_part_2/
+]

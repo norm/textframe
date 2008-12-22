@@ -1,0 +1,13 @@
+
+    *   Write some decent tests.
+    
+    *   Blockquotes trigger a sub-document parsed as per the normal document,
+        which is also then printed as per. Means restricting the width
+        of the sub-document in some way for textual printing.
+
+    *   Double blank line previous hinting for headers.
+
+    *   List items without punctuation are being marked as headers, this
+        is incorrect.
+        
+    *   Allow individual list items to be nestled rather than separated?
