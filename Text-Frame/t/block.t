@@ -15,8 +15,7 @@ my @data  = (
         {
             text => [
                 {
-                    text => 'A simple paragraph block.
-',
+                    text => 'A simple paragraph block.',
                     type => 'string',
                 },
             ],
