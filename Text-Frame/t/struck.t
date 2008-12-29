@@ -1,97 +1,159 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 3;
+use Test::More      tests => 12;
+require 't/testing.pl';
 
 use Text::Frame;
 
 
-my $frame      = Text::Frame->new();
-my $phrase     = 'A sentence with --some-- struck text.';
-my @check_data = $frame->decode_inline_text( $phrase );
-my @data       = ( 
+
+my $document;
+my $html;
+my @data;
+my %links;
+my $ref_doc;
+
+
+
+# test struck text is parsed correctly
+$document = <<END;
+        A sentence with --some-- struck text.
+
+END
+$html        
+    = qq(<p>A sentence with <strike>some</strike> struck text.</p>\n);
+@data = (
         {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type     => 'struck',
-            contents => [
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            text => [
                 {
+                    type => 'string',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'struck',
                     text => 'some',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'some',
+                        },
+                    ],
+                },
+                {
                     type => 'string',
+                    text => ' struck text.',
                 },
             ],
         },
-        {
-            type => 'string',
-            text => ' struck text.',
-        },
     );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
 
-is_deeply( \@data, \@check_data );
 
+# test two parts of struck text is parsed correctly
+$document = <<END;
+        A sentence with --two-- little --bits of-- struck text.
 
-
-$phrase     = 'A sentence with --two-- little --bits of-- struck text.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
+END
+$html        
+    = q(<p>A sentence with <strike>two</strike> little )
+    . qq(<strike>bits of</strike> struck text.</p>\n);
+@data = (
         {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type     => 'struck',
-            contents => [
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            text => [
                 {
                     type => 'string',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'struck',
                     text => 'two',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'two',
+                        },
+                    ],
                 },
-            ],
-        },
-        {
-            type => 'string',
-            text => ' little ',
-        },
-        {
-            type     => 'struck',
-            contents => [
                 {
                     type => 'string',
+                    text => ' little ',
+                },
+                {
+                    type => 'struck',
                     text => 'bits of',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'bits of',
+                        },
+                    ],
                 },
-            ],
-        },
-        {
-            type => 'string',
-            text => ' struck text.',
-        },
-    );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with --struck text--.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
-        {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type     => 'struck',
-            contents => [
                 {
                     type => 'string',
-                    text => 'struck text',
+                    text => ' struck text.',
                 },
             ],
         },
+    );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+
+
+# test struck text that wraps across lines is parsed correctly
+$document = <<END;
+        A sentence with --wrapping 
+        struck-- text.
+
+END
+$ref_doc = <<END;
+        A sentence with --wrapping struck-- text.
+
+END
+$html        
+    = qq(<p>A sentence with <strike>wrapping struck</strike> text.</p>\n);
+@data = (
         {
-            type => 'string',
-            text => '.',
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            text => [
+                {
+                    type => 'string',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'struck',
+                    text => 'wrapping struck',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'wrapping struck',
+                        },
+                    ],
+                },
+                {
+                    type => 'string',
+                    text => ' text.',
+                },
+            ],
         },
     );
-
-is_deeply( \@data, \@check_data );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
