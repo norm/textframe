@@ -13,7 +13,7 @@ my $document = <<END;
         as one block.
         
 END
-my $frame    = Text::Frame->new( string => $input );
+my $frame    = Text::Frame->new( string => $document );
 my @blocks   = $frame->get_blocks();
 ok( 0 == $#blocks );
 
@@ -25,7 +25,7 @@ $document = <<END;
         as one block.                   
                                         
 END
-$frame    = Text::Frame->new( string => $input );
+$frame    = Text::Frame->new( string => $document );
 @blocks   = $frame->get_blocks();
 ok( 0 == $#blocks );
 
@@ -40,6 +40,6 @@ $document = <<END;
         Second block.                   
                                         
 END
-$frame    = Text::Frame->new( string => $input );
+$frame    = Text::Frame->new( string => $document );
 @blocks   = $frame->get_blocks();
 ok( 1 == $#blocks );
