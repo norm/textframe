@@ -17,13 +17,13 @@ sub test_textframe {
                           ? $ref_doc
                           : $document;
     
-    use Data::Dumper;
-    my $handle = FileHandle->new( '/tmp/testing', 'w' );
-    print {$handle} "${as_text}--\n";
-    print {$handle} "${as_html}--\n";
-    print {$handle} Dumper \@check_data;
-    print {$handle} Dumper \%check_links;
-    undef $handle;
+    # use Data::Dumper;
+    # my $handle = FileHandle->new( '/tmp/testing', 'w' );
+    # print {$handle} "${as_text}--\n";
+    # print {$handle} "${as_html}--\n";
+    # print {$handle} Dumper \@check_data;
+    # print {$handle} Dumper \%check_links;
+    # undef $handle;
                           
     ok( $as_text eq $test_doc );
     ok( $as_html eq $html     );

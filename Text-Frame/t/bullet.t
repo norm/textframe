@@ -38,6 +38,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -51,6 +52,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -89,6 +91,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -102,6 +105,7 @@ END
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -115,6 +119,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -154,6 +159,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -168,6 +174,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -181,6 +188,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -226,6 +234,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -240,6 +249,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -255,6 +265,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -269,6 +280,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -341,6 +353,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -355,78 +368,7 @@ END
                 'bullet',
                 'block',
             ],
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'bullet',
-                'block',
-            ],
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -442,6 +384,38 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -456,6 +430,53 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -469,6 +490,7 @@ END
                 'bullet',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -480,3 +502,7 @@ END
 %links = (
     );
 test_textframe( $document, $html, \@data, \%links );
+
+
+# test opening too many lists by using bad indents
+# TODO

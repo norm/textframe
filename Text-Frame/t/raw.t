@@ -18,10 +18,6 @@ my $ref_doc;
 
 
 
-my $phrase     = '';
-
-
-
 # test a simple sentence with some raw text
 $document = <<END;
         A sentence with |raw| text.
@@ -36,6 +32,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -71,6 +68,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -114,6 +112,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -149,6 +148,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
