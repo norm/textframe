@@ -34,6 +34,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -82,6 +83,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -143,6 +145,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -165,6 +168,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -187,6 +191,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -239,6 +244,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',
@@ -261,6 +267,7 @@ $html
                 'indent',
                 'block',
             ],
+            metadata => {},
             text => [
                 {
                     type => 'string',

@@ -3,99 +3,124 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 6;
+use Test::More      tests => 24;
+require 't/testing.pl';
 
 use Text::Frame;
 
 
-my $frame      = Text::Frame->new();
-my $phrase     = 'A sentence with «some» code.';
-my @check_data = $frame->decode_inline_text( $phrase );
-my @data       = ( 
-        {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type => 'code',
-            text => 'some',
-        },
-        {
-            type => 'string',
-            text => ' code.',
-        },
-    );
 
-is_deeply( \@data, \@check_data );
+my $document;
+my $html;
+my @data;
+my %links;
+my $ref_doc;
 
 
 
-$phrase     = 'A sentence with <<some>> code.';
-@check_data = $frame->decode_inline_text( $phrase );
+# test simple code string embedding, with both marker types
+$document = <<END;
+        A sentence with «some» code.
 
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with «two» little «bits of» code.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
+END
+$ref_doc = $document;
+$html = <<END;
+<p>A sentence with <code>some</code> code.</p>
+END
+@data = (
         {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type => 'code',
-            text => 'two',
-        },
-        {
-            type => 'string',
-            text => ' little ',
-        },
-        {
-            type => 'code',
-            text => 'bits of',
-        },
-        {
-            type => 'string',
-            text => ' code.',
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'code',
+                    text => 'some',
+                },
+                {
+                    type => 'string',
+                    text => ' code.',
+                },
+            ],
         },
     );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+$document = <<END;
+        A sentence with <<some>> code.
 
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with <<two>> little <<bits of>> code.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
-$phrase     = 'A sentence with «code».';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
+# test two code strings work correctly, with both marker types
+$document = <<END;
+        A sentence with «two» little «bits of» code.
+
+END
+$ref_doc = $document;
+$html = <<END;
+<p>A sentence with <code>two</code> little <code>bits of</code> code.</p>
+END
+@data = (
         {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type => 'code',
-            text => 'code',
-        },
-        {
-            type => 'string',
-            text => '.',
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'code',
+                    text => 'two',
+                },
+                {
+                    type => 'string',
+                    text => ' little ',
+                },
+                {
+                    type => 'code',
+                    text => 'bits of',
+                },
+                {
+                    type => 'string',
+                    text => ' code.',
+                },
+            ],
         },
     );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+$document = <<END;
+        A sentence with <<two>> little <<bits of>> code.
 
-is_deeply( \@data, \@check_data );
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+$document = <<END;
+        A sentence with «two» little <<bits of>> code.
+
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+$document = <<END;
+        A sentence with <<two>> little «bits of» code.
+
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
-
-$phrase     = 'A sentence with <<code>>.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
+# test a simple code block, with both marker types
+# TODO
