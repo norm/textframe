@@ -1,10 +1,15 @@
 use strict;
 use warnings;
 
+use charnames qw( :full );
+
 use Test::More      tests => 16;
 require 't/testing.pl';
 
+use Readonly;
 use Text::Frame;
+
+Readonly my $APOSTROPHE => "\N{RIGHT SINGLE QUOTATION MARK}";
 
 
 
@@ -69,13 +74,9 @@ $document = <<END;
 http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/
 >
 END
-$html        
-    = q(<p>This document has a link to an article <a)
-    . q( href='http://www.markboulton.co.uk/journal/comments/)
-    . q(five_simple_steps_to_better_typography_part_2/'>Mark)
-    . q( Boulton's Five Simple Steps</a>. But the)
-    . q( URI of the link is postponed until later for)
-    . qq( readability.</p>\n);
+$html = <<END;
+<p>This document has a link to an article <a href='http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'>Mark Boulton${APOSTROPHE}s Five Simple Steps</a>. But the URI of the link is postponed until later for readability.</p>
+END
 @data = (
         {
             context => [
@@ -130,6 +131,11 @@ $ref_doc = <<END;
         Last block also links to <Google>. But which?
 
 <Google | http://www.google.com/>
+END
+$html = <<END;
+<p>This block has a reference link to <a href='http://www.google.com/'>Google</a>.</p>
+<p>This block has a different link to <a href='http://www.google.co.uk/'>Google</a>.</p>
+<p>Last block also links to <a href='http://www.google.com/'>Google</a>. But which?</p>
 END
 $html        
     = q(<p>This block has a reference link to <a)

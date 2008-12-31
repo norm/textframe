@@ -170,38 +170,39 @@ $html
 test_textframe( $document, $html, \@data, \%links );
 
 
-# TODO: {
 # # test that code within raw is not parsed
-# $document = <<END;
-#         A sentence with |raw «not code» text|.
-# 
-# END
-# $html        
-#     = qq(<p>A sentence with raw «not code» text.</p>\n);
-# @data = (
-#         {
-#             context => [
-#                 'indent',
-#                 'indent',
-#                 'block',
-#             ],
-#             text => [
-#                 {
-#                     type => 'string',
-#                     text => 'A sentence with ',
-#                 },
-#                 {
-#                     type => 'raw',
-#                     text => 'raw «not code» text',
-#                 },
-#                 {
-#                     type => 'string',
-#                     text => '.',
-#                 },
-#             ],
-#         },
-#     );
-# %links = (
-#     );
-# test_textframe( $document, $html, \@data, \%links );
-# }
+$document = <<END;
+        A sentence with |raw «not code» text|.
+
+END
+$html = <<END;
+<p>A sentence with raw «not code» text.</p>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'raw',
+                    text => 'raw «not code» text',
+                },
+                {
+                    type => 'string',
+                    text => '.',
+                },
+            ],
+        },
+    );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+
