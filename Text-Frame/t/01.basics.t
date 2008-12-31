@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 3;
+use Test::More      tests => 5;
 
 use Text::Frame;
 
@@ -40,6 +40,21 @@ $document = <<END;
         Second block.                   
                                         
 END
+$frame    = Text::Frame->new( string => $document );
+@blocks   = $frame->get_blocks();
+ok( 1 == $#blocks );
+
+
+# ensure we can accept other types of line endings
+$document = qq(        This should be resolved\r\n)
+          . qq(        as two blocks.\r\n\r\n)
+          . qq(        Second block.\r\n\r\n);
+$frame    = Text::Frame->new( string => $document );
+@blocks   = $frame->get_blocks();
+ok( 1 == $#blocks );
+$document = qq(        This should be resolved\r)
+          . qq(        as two blocks.\r\r)
+          . qq(        Second block.\r\r);
 $frame    = Text::Frame->new( string => $document );
 @blocks   = $frame->get_blocks();
 ok( 1 == $#blocks );
