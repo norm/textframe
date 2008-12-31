@@ -1,313 +1,302 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 14;
+use Test::More      tests => 48;
+require 't/testing.pl';
 
 use Text::Frame;
 
 
-my $frame      = Text::Frame->new();
-my $phrase     = 'A sentence with _a little_ emphasis.';
-my @check_data = $frame->decode_inline_text( $phrase );
-my @data       = ( 
+
+my $document;
+my $html;
+my @data;
+my %links;
+my $ref_doc;
+
+
+
+# test italic text is parsed correctly
+$document = <<END;
+        A sentence with _some emphasis_.
+
+END
+$ref_doc = $document;
+$html    = <<END;
+<p>A sentence with <em>some emphasis</em>.</p>
+END
+@data = (
         {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
-                {
-                    text => 'a little',
-                    type => 'string',
-                },
+            context => [
+                'indent',
+                'indent',
+                'block',
             ],
-        },
-        {
-            type => 'string',
-            text => ' emphasis.',
-        },
-    );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with *a little* emphasis.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with two *little* *bits* of emphasis.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
-        {
-            type => 'string',
-            text => 'A sentence with two ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
+            metadata => {},
+            text => [
                 {
                     type => 'string',
-                    text => 'little',
-                },
-            ],
-        },
-        {
-            type => 'string',
-            text => ' ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
-                {
-                    type => 'string',
-                    text => 'bits',
-                },
-            ],
-        },
-        {
-            type => 'string',
-            text => ' of emphasis.',
-        },
-    );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with two _little_ _bits_ of emphasis.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with two *little* _bits_ of emphasis.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with two *little* _bits_ of emphasis.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'Simple sentence with *emphasis*.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
-        {
-            type => 'string',
-            text => 'Simple sentence with ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
-                {
-                    type => 'string',
-                    text => 'emphasis',
-                },
-            ],
-        },
-        {
-            type => 'string',
-            text => '.',
-        },
-    );
-
-is_deeply( \@data, \@check_data );
-
-
-
-
-$phrase     = "A sentence with *emphasis split\n"
-            . 'across* two lines.';
-@data       = ( 
-        {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
-                {
-                    type => 'string',
-                    text => "emphasis split\nacross",
-                },
-            ],
-        },
-        {
-            type => 'string',
-            text => ' two lines.',
-        },
-    );
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = "A sentence with _emphasis split\n"
-            . 'across_ two lines.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
-
-
-
-$phrase     = 'A sentence with *a _little_ nested* emphasis.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
-        {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
-                {
-                    type => 'string',
-                    text => 'a ',
+                    text => 'A sentence with ',
                 },
                 {
-                    type     => 'emphasis',
+                    type => 'emphasis',
+                    text => 'some emphasis',
                     contents => [
                         {
                             type => 'string',
-                            text => 'little',
+                            text => 'some emphasis',
                         },
                     ],
                 },
                 {
                     type => 'string',
-                    text => ' nested',
+                    text => '.',
                 },
             ],
-        },
-        {
-            type => 'string',
-            text => ' emphasis.',
         },
     );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+$document = <<END;
+        A sentence with *some emphasis*.
 
-is_deeply( \@data, \@check_data );
-
-
-
-# data structure should be identical, as the type
-# of emphasis character used is irrelevant
-$phrase     = 'A sentence with _a *little* nested_ emphasis.';
-@check_data = $frame->decode_inline_text( $phrase );
-
-is_deeply( \@data, \@check_data );
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
+# test that wrapping doesn't break emphasis
+$document = <<END;
+        A sentence with _some 
+        emphasis_.
 
-$phrase     = 'A sentence _with *three _levels_ of* emphasis_ cannot work.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+$document = <<END;
+        A sentence with *some 
+        emphasis*.
+
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+
+
+# test that the emphasis module correctly uses underscores in generated
+# document again (rather than stupidly switching to asterisks)
+$document = <<END;
+        A sentence with _some emphasis_ and _some more emphasis_.
+
+END
+$ref_doc = $document;
+$html    = <<END;
+<p>A sentence with <em>some emphasis</em> and <em>some more emphasis</em>.</p>
+END
+@data = (
         {
-            type => 'string',
-            text => 'A sentence ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
                 {
                     type => 'string',
-                    text => 'with *three _levels',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'emphasis',
+                    text => 'some emphasis',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'some emphasis',
+                        },
+                    ],
+                },
+                {
+                    type => 'string',
+                    text => ' and ',
+                },
+                {
+                    type => 'emphasis',
+                    text => 'some more emphasis',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'some more emphasis',
+                        },
+                    ],
+                },
+                {
+                    type => 'string',
+                    text => '.',
                 },
             ],
-        },
-        {
-            type => 'string',
-            text => ' of* emphasis_ cannot work.',
         },
     );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+$document = <<END;
+        A sentence with *some emphasis* and *some more emphasis*.
 
-is_deeply( \@data, \@check_data );
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+$document = <<END;
+        A sentence with _some emphasis_ and *some more emphasis*.
+
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+$document = <<END;
+        A sentence with *some emphasis* and _some more emphasis_.
+
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
+# test nested emphasis creates strong in HTML and uses asterisks in text
+$document = <<END;
+        A sentence with _some *nested* emphasis_.
 
-$phrase     = 'A sentence *with _three *levels* of_ emphasis* cannot work.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
+END
+$ref_doc = $document;
+$html    = <<END;
+<p>A sentence with <em>some <strong>nested</strong> emphasis</em>.</p>
+END
+@data = (
         {
-            type => 'string',
-            text => 'A sentence ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
                 {
                     type => 'string',
-                    text => 'with _three *levels',
+                    text => 'A sentence with ',
+                },
+                {
+                    type => 'emphasis',
+                    text => 'some *nested* emphasis',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'some ',
+                        },
+                        {
+                            type => 'emphasis',
+                            text => 'nested',
+                            contents => [
+                                {
+                                    type => 'string',
+                                    text => 'nested',
+                                },
+                            ],
+                        },
+                        {
+                            type => 'string',
+                            text => ' emphasis',
+                        },
+                    ],
+                },
+                {
+                    type => 'string',
+                    text => '.',
                 },
             ],
-        },
-        {
-            type => 'string',
-            text => ' of_ emphasis* cannot work.',
         },
     );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+$document = <<END;
+        A sentence with *some _nested_ emphasis*.
 
-is_deeply( \@data, \@check_data );
+END
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
+# prove that three levels of emphasis does not work
+$document = <<END;
+        A sentence _with *three _levels_ of* emphasis_ cannot work.
 
-$phrase     = 'A sentence with _three_ *instances* of _emphasis_ can work.';
-@check_data = $frame->decode_inline_text( $phrase );
-@data       = ( 
+END
+$html    = <<END;
+<p>A sentence <em>with *three _levels</em> of* emphasis_ cannot work.</p>
+END
+@data = (
         {
-            type => 'string',
-            text => 'A sentence with ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
                 {
                     type => 'string',
-                    text => 'three',
+                    text => 'A sentence ',
                 },
-            ],
-        },
-        {
-            type => 'string',
-            text => ' ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
+                {
+                    type     => 'emphasis',
+                    text     => 'with *three _levels',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'with *three _levels',
+                        },
+                    ],
+                },
                 {
                     type => 'string',
-                    text => 'instances',
+                    text => ' of* emphasis_ cannot work.',
                 },
             ],
-        },
-        {
-            type => 'string',
-            text => ' of ',
-        },
-        {
-            type     => 'emphasis',
-            contents => [
-                {
-                    type => 'string',
-                    text => 'emphasis',
-                },
-            ],
-        },
-        {
-            type => 'string',
-            text => ' can work.',
         },
     );
+%links = (
+    );
+test_textframe( $document, $html, \@data, \%links );
+$document = <<END;
+        A sentence *with _three *levels* of_ emphasis* cannot work.
 
-is_deeply( \@data, \@check_data );
+END
+$ref_doc = <<END;
+        A sentence _with _three *levels_ of_ emphasis* cannot work.
+
+END
+$html    = <<END;
+<p>A sentence <em>with _three *levels</em> of_ emphasis* cannot work.</p>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'A sentence ',
+                },
+                {
+                    type     => 'emphasis',
+                    text     => 'with _three *levels',
+                    contents => [
+                        {
+                            type => 'string',
+                            text => 'with _three *levels',
+                        },
+                    ],
+                },
+                {
+                    type => 'string',
+                    text => ' of_ emphasis* cannot work.',
+                },
+            ],
+        },
+    );
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
