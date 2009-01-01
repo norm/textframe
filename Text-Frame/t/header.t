@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 4;
+use Test::More      tests => 8;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -168,6 +168,105 @@ END
                 {
                     type => 'string',
                     text => 'Not a third level header.',
+                },
+            ],
+        },
+    );
+%links = ();
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+
+
+# # check header hints are parsed correctly
+$document = <<END;
+        Third level header
+
+
+        Third level header.
+
+        Third level header.
+        -------------------
+
+        = Third level header. =
+
+END
+$ref_doc = <<END;
+        
+        Third level header
+
+        
+        Third level header.
+
+        
+        Third level header.
+
+        
+        Third level header.
+
+END
+$html = <<END;
+<h3>Third level header</h3>
+<h3>Third level header.</h3>
+<h3>Third level header.</h3>
+<h3>Third level header.</h3>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'header',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Third level header',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'header',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Third level header.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'header',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Third level header.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'header',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Third level header.',
                 },
             ],
         },
