@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 20;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -38,7 +38,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -52,7 +54,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -61,8 +65,58 @@ END
             ],
         },
     );
-%links = (
+%links = ();
+test_textframe( $document, $html, \@data, \%links );
+
+
+# test that very simple lists don't become headers
+$document = <<END;
+    *   first item
+
+    *   second item
+
+END
+$html = <<END;
+<ul>
+  <li><p>first item</p></li>
+  <li><p>second item</p></li>
+</ul>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => 'first item',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => 'second item',
+                },
+            ],
+        },
     );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -91,7 +145,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -119,7 +175,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -128,8 +186,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -159,7 +216,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -174,7 +233,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -188,7 +249,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -197,8 +260,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -234,7 +296,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -249,7 +313,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -265,7 +331,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -280,7 +348,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -289,8 +359,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -353,7 +422,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -368,84 +439,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {},
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {},
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {},
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {},
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -461,7 +457,44 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -476,7 +509,61 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -490,7 +577,9 @@ END
                 'bullet',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                no_header => 1,
+            },
             text => [
                 {
                     type => 'string',
@@ -499,8 +588,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
