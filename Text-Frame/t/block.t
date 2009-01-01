@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 4;
+use Test::More      tests => 12;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -21,6 +21,7 @@ $document = <<END;
         A simple paragraph block.
 
 END
+$ref_doc = $document;
 $html = <<END;
 <p>A simple paragraph block.</p>
 END
@@ -40,6 +41,26 @@ END
             ],
         } 
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
+
+$document = <<END;
+    A simple paragraph block.
+
+END
+$data[0]{'context'} = [
+        'indent',
+        'block',
+    ];
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+$document = <<END;
+            A simple paragraph block.
+
+END
+$data[0]{'context'} = [
+        'indent',
+        'indent',
+        'indent',
+        'block',
+    ];
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
