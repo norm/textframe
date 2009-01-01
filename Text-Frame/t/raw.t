@@ -49,8 +49,7 @@ $html
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -93,8 +92,7 @@ $html
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -129,8 +127,7 @@ $html
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -165,8 +162,7 @@ $html
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -202,7 +198,6 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 

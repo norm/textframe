@@ -55,8 +55,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 $document = <<END;
         A sentence with *some emphasis*.
@@ -134,8 +133,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 $document = <<END;
         A sentence with *some emphasis* and *some more emphasis*.
@@ -207,8 +205,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 $document = <<END;
         A sentence with *some _nested_ emphasis*.
@@ -255,8 +252,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 $document = <<END;
         A sentence *with _three *levels* of_ emphasis* cannot work.

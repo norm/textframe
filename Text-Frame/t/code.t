@@ -51,8 +51,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 $document = <<END;
         A sentence with <<some>> code.
@@ -102,8 +101,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 $document = <<END;
         A sentence with <<two>> little <<bits of>> code.

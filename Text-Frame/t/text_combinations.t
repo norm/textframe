@@ -85,8 +85,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -156,6 +155,5 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );

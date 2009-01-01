@@ -46,6 +46,7 @@ END
             ],
             metadata => {
                 list_number => '#',
+                no_header   => '1',
             },
             text => [
                 {
@@ -62,6 +63,7 @@ END
             ],
             metadata => {
                 list_number => '#',
+                no_header   => '1',
             },
             text => [
                 {
@@ -71,8 +73,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
@@ -104,6 +105,7 @@ END
             ],
             metadata => {
                 list_number => '4',
+                no_header   => '1',
             },
             text => [
                 {
@@ -120,6 +122,7 @@ END
             ],
             metadata => {
                 list_number => '#',
+                no_header   => '1',
             },
             text => [
                 {
@@ -129,8 +132,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
@@ -169,6 +171,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -185,6 +188,7 @@ END
             ],
             metadata => {
                 list_number => '10',
+                no_header   => '1',
             },
             text => [
                 {
@@ -201,6 +205,7 @@ END
             ],
             metadata => {
                 list_number => '11',
+                no_header   => '1',
             },
             text => [
                 {
@@ -210,8 +215,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
@@ -242,6 +246,7 @@ END
             ],
             metadata => {
                 list_number => '3',
+                no_header   => '1',
             },
             text => [
                 {
@@ -272,6 +277,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -281,8 +287,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -317,6 +322,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -334,6 +340,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -351,6 +358,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -367,6 +375,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -376,8 +385,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -415,6 +423,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -432,6 +441,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -450,6 +460,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -467,6 +478,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -476,8 +488,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 
@@ -533,6 +544,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -550,6 +562,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -568,6 +581,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -586,6 +600,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -603,6 +618,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -621,6 +637,7 @@ END
             ],
             metadata => {
                 list_number => '1',
+                no_header   => '1',
             },
             text => [
                 {
@@ -639,6 +656,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -656,6 +674,7 @@ END
             ],
             metadata => {
                 list_number => '3',
+                no_header   => '1',
             },
             text => [
                 {
@@ -672,6 +691,7 @@ END
             ],
             metadata => {
                 list_number => '2',
+                no_header   => '1',
             },
             text => [
                 {
@@ -681,8 +701,7 @@ END
             ],
         },
     );
-%links = (
-    );
+%links = ();
 test_textframe( $document, $html, \@data, \%links );
 
 # test opening too many lists by using bad indents
