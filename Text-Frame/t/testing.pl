@@ -1,3 +1,4 @@
+use Data::Dumper;
 use FileHandle;
 
 sub test_textframe {
@@ -29,6 +30,15 @@ sub test_textframe {
     ok( $as_html eq $html     );
     is_deeply( \@check_data,  $data  );
     is_deeply( \%check_links, $links );
+}
+
+sub dump_variable {
+    my $variable = shift;
+    my $filename = shift || '/tmp/testing';
+    
+    use FileHandle;
+    my $handle = FileHandle->new( $filename, q(w) );
+    print {$handle} Dumper $variable;
 }
 
 1;
