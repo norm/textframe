@@ -121,4 +121,77 @@ test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
 # test a simple code block, with both marker types
-# TODO
+$document = <<END;
+        First paragraph.
+        
+    « perl:
+        # copy arguments over
+        foreach my $key ( keys %metadata ) {
+            $details{ $key } = $metadata{ $key };
+        }
+    »
+ 
+        Second paragraph.
+
+END
+$html = <<END;
+<p>First paragraph.</p>
+<pre><code class='perl'>
+# copy arguments over
+foreach my $key ( keys %metadata ) {
+    $details{ $key } = $metadata{ $key };
+}
+</code></pre>
+<p>Second paragraph.</p>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'First paragraph.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'code',
+                'block',
+            ],
+            metadata => {
+                language => 'perl',
+            },
+            text => [
+                {
+                    type => 'string',
+                    text => '# copy arguments over
+foreach my $key ( keys %metadata ) {
+    $details{ $key } = $metadata{ $key };
+}',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Second paragraph.',
+                },
+            ],
+        },
+    );
+%links = ();
+test_textframe( $document, $html, \@data, \%links );

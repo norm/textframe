@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 20;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -166,7 +166,7 @@ $html
 test_textframe( $document, $html, \@data, \%links );
 
 
-# # test that code within raw is not parsed
+# test that code within raw is not parsed
 $document = <<END;
         A sentence with |raw «not code» text|.
 
@@ -201,3 +201,53 @@ END
 %links = ();
 test_textframe( $document, $html, \@data, \%links );
 
+
+# test raw blocks
+$document = <<END;
+        First paragraph.
+        
+    |   <div id='spesh'>In this section,
+    |       white space is ignored,
+    |           but no other interpolation
+    |   occurs.</div>
+ 
+        Second paragraph.
+
+END
+$html = <<END;
+<p>First paragraph.</p>
+<div id='spesh'>In this section, white space is ignored, but no other interpolation occurs.</div></pre>
+<p>Second paragraph.</p>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'First paragraph.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'comment',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'This is not completely ignored.',
+                },
+            ],
+        },
+    );
+%links = ();
+test_textframe( $document, $html, \@data, \%links );
