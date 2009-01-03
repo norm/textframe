@@ -94,7 +94,7 @@ $ref_doc = <<END;
 END
 $html = <<END;
 <p>First paragraph.</p>
-<p><i>* This is not completely * ignored. *</i></p>
+<p>/* This is not completely * ignored. */</p>
 <p>Second paragraph.</p>
 END
 @data = (
@@ -122,21 +122,7 @@ END
             text => [
                 {
                     type => 'string',
-                    text => '',
-                },
-                {
-                    type => 'italic',
-                    text => '* This is not completely * ignored. *',
-                    contents => [
-                        {
-                            type => 'string',
-                            text => '* This is not completely * ignored. *'
-                        }
-                    ],
-                },
-                {
-                    type => 'string',
-                    text => '',
+                    text => '/* This is not completely * ignored. */',
                 },
             ],
         },
