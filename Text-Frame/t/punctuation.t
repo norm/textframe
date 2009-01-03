@@ -4,7 +4,7 @@ use warnings;
 use charnames qw( :full );
 use utf8;
 
-use Test::More      tests => 1;
+use Test::More      tests => 4;
 
 use Readonly;
 use Text::Frame;
@@ -25,79 +25,56 @@ my $phrase;
 my $html;
 
 
+# test ellipses
 $phrase = <<END;
-        Three consecutive periods will be changed ... to an ellipsis.
+        Three consecutive periods («...») will be changed to an ellipsis
+        (...).
 
 END
 $html = <<END;
-<p>Three consecutive periods will be changed ${ELLIPSIS} to an ellipsis.</p>
+<p>Three consecutive periods (<code>...</code>) will be changed to an ellipsis (${ELLIPSIS}).</p>
 END
 $frame = Text::Frame->new( string => $phrase );
 ok( $html eq $frame->as_html() );
 
 
-# 
-# 
-#     $phrase = <<END;
-# 
-#             A double hyphen between words (eg. 1914--1918) is converted to 
-#             an en-dash.
-# 
-# END
-#     $correct = <<END;
-# 
-#             A double hyphen between words (eg. 1914–1918) is converted to 
-#             an en-dash.
-# 
-# END
-#     $frame->set_string( $phrase );
-#     ok( $correct eq $frame->as_text() );
-# 
-# 
-# 
-#     $phrase = <<END;
-# 
-#             A triple hyphen will be converted to an em-dash --- no matter what
-#             surrounds it.
-# 
-# END
-#     $correct = <<END;
-# 
-#             A triple hyphen will be converted to an em-dash – no matter what
-#             surrounds it.
-# 
-# END
-#     $frame->set_string( $phrase );
-#     ok( $correct eq $frame->as_text() );
-# 
-# 
-# 
-#     $phrase = <<END;
-# 
-#             Quotation marks are "converted to proper quotation marks".
-# 
-# END
-#     $correct = <<END;
-# 
-#             Quotation marks are “converted to proper quotation marks”.
-# 
-# END
-#     $frame->set_string( $phrase );
-#     ok( $correct eq $frame->as_text() );
-# 
-# 
-# 
-#     $phrase = <<END;
-# 
-#             A single quote inside a word is converted into the proper type
-#             of apostrophe - nice isn't it?
-# 
-# END
-#     $correct = <<END;
-# 
-#             A single quote inside a word is converted into the proper type
-#             of apostrophe - nice isn’t it?
-# 
-# END
-#     $frame->set_string( $phrase );
-#     ok( $correct eq $frame->as_text() );    
+# test en-dashes
+$phrase = <<END;
+        A double hyphen («--») between words will be changed to an en-dash
+        (--), if there are no spaces between the words and the hyphens.
+
+END
+$html = <<END;
+<p>A double hyphen (<code>--</code>) between words will be changed to an en-dash (${ENDASH}), if there are no spaces between the words and the hyphens.</p>
+END
+$frame = Text::Frame->new( string => $phrase );
+ok( $html eq $frame->as_html() );
+
+
+# test em-dashes
+$phrase = <<END;
+        A triple hyphen («---») will be changed to an em-dash (---).
+
+END
+$html = <<END;
+<p>A triple hyphen (<code>---</code>) will be changed to an em-dash (${EMDASH}).</p>
+END
+$frame = Text::Frame->new( string => $phrase );
+ok( $html eq $frame->as_html() );
+
+
+# test apostrophes
+$phrase = <<END;
+        Single quote characters within words (such as |isn't|) will be
+        converted to apostrophes (isn't).
+
+END
+$html = <<END;
+<p>Single quote characters within words (such as isn't) will be converted to apostrophes (isn${APOSTROPHE}t).</p>
+END
+$frame = Text::Frame->new( string => $phrase );
+ok( $html eq $frame->as_html() );
+
+
+# TODO
+# test quotation marks
