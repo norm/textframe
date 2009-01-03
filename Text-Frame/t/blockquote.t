@@ -33,7 +33,7 @@ $ref_doc = <<END;
 
 END
 $html = <<END;
-<blockquote><p>Hello world.</p> </blockquote>
+<blockquote><p>Hello world.</p></blockquote>
 END
 @data = (
         {
@@ -57,7 +57,7 @@ test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 # # test a quoted paragraph with citation
 $document = <<END;
-    >   From <Mark Boulton's Five Simple Steps>:
+    From <Mark Boulton's Five Simple Steps>:
     >   With hanging punctuation the flow of text on the left hand side is
     >   uninterrupted. The bullets, glyphs or numbers sit in the gutter to
     >   highlight the list. This representation of a list is more
@@ -67,19 +67,8 @@ $document = <<END;
 http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/
 >
 END
-$ref_doc = <<END;
-    >   From <Mark Boulton's Five Simple Steps>:
-    >   With hanging punctuation the flow of text on the left hand side is
-    >   uninterrupted. The bullets, glyphs or numbers sit in the gutter to
-    >   highlight the list. This representation of a list is more sophisticated
-    >   visually and more legible.
-
-<Mark Boulton's Five Simple Steps |
-http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/
->
-END
 $html = <<END;
-<blockquote cite='http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'><p>With hanging punctuation the flow of text on the left hand side is uninterrupted. The bullets, glyphs or numbers sit in the gutter to highlight the list. This representation of a list is more sophisticated visually and more legible.</p> </blockquote>
+<blockquote cite='http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'><p>With hanging punctuation the flow of text on the left hand side is uninterrupted. The bullets, glyphs or numbers sit in the gutter to highlight the list. This representation of a list is more sophisticated visually and more legible.</p></blockquote>
 END
 @data = (
         {
@@ -121,7 +110,7 @@ $ref_doc = <<END;
 
 END
 $html = <<END;
-<blockquote><p>This is a paragraph.</p> <p>This is a second paragraph.</p> <p>This is a third paragraph.</p> </blockquote>
+<blockquote><p>This is a paragraph.</p> <p>This is a second paragraph.</p> <p>This is a third paragraph.</p></blockquote>
 END
 @data = (
         {
@@ -142,6 +131,7 @@ END
 %links = ();
 test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
+
 # test different types of quoted items - bullets
 $document = <<END;
     >   *   List item
@@ -160,7 +150,7 @@ $ref_doc = <<END;
 
 END
 $html = <<END;
-<blockquote><ul> <li><p>List item</p></li> <li><p>List item</p></li> </ul> <p>Paragraph?</p> </blockquote>
+<blockquote><ul> <li><p>List item</p></li> <li><p>List item</p></li> </ul> <p>Paragraph?</p></blockquote>
 END
 @data = (
         {
@@ -184,7 +174,7 @@ test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 # test different types of quoted items - numbered items
 $document = <<END;
-    >   #   List item
+    >   #.  List item
     >
     >   2.  List item
     >
@@ -200,7 +190,7 @@ $ref_doc = <<END;
 
 END
 $html = <<END;
-<blockquote><ol> <li><p>List item</p></li> <li><p>List item</p></li> </ol> <p>Paragraph?</p> </blockquote>
+<blockquote><ol> <li><p>List item</p></li> <li><p>List item</p></li> </ol> <p>Paragraph?</p></blockquote>
 END
 @data = (
         {

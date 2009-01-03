@@ -70,7 +70,7 @@ END
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
 # test comments still work within normal body text.
@@ -208,6 +208,20 @@ END
                 {
                     type => 'string',
                     text => 'This is not completely ignored.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Second paragraph.',
                 },
             ],
         },

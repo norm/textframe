@@ -214,9 +214,18 @@ $document = <<END;
         Second paragraph.
 
 END
+$ref_doc = <<END;
+        First paragraph.
+
+    |   <div id='spesh'>In this section, white space is ignored, but no other
+    |   interpolation occurs.</div>
+
+        Second paragraph.
+
+END
 $html = <<END;
 <p>First paragraph.</p>
-<div id='spesh'>In this section, white space is ignored, but no other interpolation occurs.</div></pre>
+<div id='spesh'>In this section, white space is ignored, but no other interpolation occurs.</div>
 <p>Second paragraph.</p>
 END
 @data = (
@@ -237,17 +246,31 @@ END
         {
             context => [
                 'indent',
-                'comment',
+                'raw',
                 'block',
             ],
             metadata => {},
             text => [
                 {
                     type => 'string',
-                    text => 'This is not completely ignored.',
+                    text => '',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Second paragraph.',
                 },
             ],
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
