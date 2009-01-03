@@ -1,10 +1,7 @@
-
-
-
 use strict;
 use warnings;
 
-use Test::More      tests => 8;
+use Test::More      tests => 12;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -151,6 +148,35 @@ END
                 {
                     type => 'string',
                     text => ' in it.',
+                },
+            ],
+        },
+    );
+%links = ();
+test_textframe( $document, $html, \@data, \%links );
+
+
+# test an example that was previously interpreted as italics and emphasis
+$document = <<END;
+        Ignored comment blocks are started with the marker slash-star (/*) and
+        end with star-slash (*/).
+
+END
+$html = <<END;
+<p>Ignored comment blocks are started with the marker slash-star (/*) and end with star-slash (*/).</p>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'Ignored comment blocks are started with the marker slash-star (/*) and end with star-slash (*/).',
                 },
             ],
         },

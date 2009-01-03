@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 24;
+use Test::More      tests => 32;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -120,26 +120,89 @@ END
 test_textframe( $document, $html, \@data, \%links, $ref_doc );
 
 
+# test an example that was previously interpreted incorrectly
+$document = <<END;
+        A block of text to be treated as a raw block and where white space is
+        treated as significant is marked by having double guillemets (<<«>>
+        and <<»>>) or double angle brackets («<<» and «>>») alone on lines
+        immediately before and after the block.
+
+END
+$ref_doc = $document;
+$html = <<END;
+<p>A block of text to be treated as a raw block and where white space is treated as significant is marked by having double guillemets (<code>«</code> and <code>»</code>) or double angle brackets (<code>&lt;&lt;</code> and <code>&gt;&gt;</code>) alone on lines immediately before and after the block.</p>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'A block of text to be treated as a raw block and where white space is treated as significant is marked by having double guillemets (',
+                },
+                {
+                    type => 'code',
+                    text => '«',
+                },
+                {
+                    type => 'string',
+                    text => ' and ',
+                },
+                {
+                    type => 'code',
+                    text => '»',
+                },
+                {
+                    type => 'string',
+                    text => ') or double angle brackets (',
+                },
+                {
+                    type => 'code',
+                    text => '<<',
+                },
+                {
+                    type => 'string',
+                    text => ' and ',
+                },
+                {
+                    type => 'code',
+                    text => '>>',
+                },
+                {
+                    type => 'string',
+                    text => ') alone on lines immediately before and after the block.',
+                },
+            ],
+        },
+    );
+%links = ();
+test_textframe( $document, $html, \@data, \%links );
+
+
 # test a simple code block, with both marker types
 $document = <<END;
         First paragraph.
-        
+
     « perl:
         # copy arguments over
-        foreach my $key ( keys %metadata ) {
-            $details{ $key } = $metadata{ $key };
+        foreach my \$key ( keys \%metadata ) {
+            \$details{ \$key } = \$metadata{ \$key };
         }
     »
- 
+
         Second paragraph.
 
 END
 $html = <<END;
 <p>First paragraph.</p>
-<pre><code class='perl'>
-# copy arguments over
-foreach my $key ( keys %metadata ) {
-    $details{ $key } = $metadata{ $key };
+<pre><code class='perl'># copy arguments over
+foreach my \$key ( keys \%metadata ) {
+    \$details{ \$key } = \$metadata{ \$key };
 }
 </code></pre>
 <p>Second paragraph.</p>
@@ -165,16 +228,11 @@ END
                 'code',
                 'block',
             ],
-            metadata => {
-                language => 'perl',
-            },
+            metadata => {},
             text => [
                 {
                     type => 'string',
-                    text => '# copy arguments over
-foreach my $key ( keys %metadata ) {
-    $details{ $key } = $metadata{ $key };
-}',
+                    text => '',
                 },
             ],
         },
