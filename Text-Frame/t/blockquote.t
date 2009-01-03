@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 20;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -191,6 +191,50 @@ $ref_doc = <<END;
 END
 $html = <<END;
 <blockquote><ol> <li><p>List item</p></li> <li><p>List item</p></li> </ol> <p>Paragraph?</p></blockquote>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'blockquote',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => '',
+                },
+            ],
+        },
+    );
+%links = ();
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+
+
+# test that a normal paragraph starting like a blockquote doesn't match
+# as a blockquote
+$document = <<END;
+    >   From <Mark Boulton's Five Simple Steps>:
+    >   With hanging punctuation the flow of text on the left hand side is
+    >   uninterrupted. The bullets, glyphs or numbers sit in the gutter to
+    >   highlight the list. This representation of a list is more 
+    >   sophisticated visually and more legible.
+    
+END
+$ref_doc = <<END;
+    >   From <Mark Boulton's Five Simple Steps>: With hanging punctuation
+    >   the flow of text on the left hand side is uninterrupted. The
+    >   bullets, glyphs or numbers sit in the gutter to highlight the list.
+    >   This representation of a list is more sophisticated visually and
+    >   more legible.
+    >   
+    >   <Mark Boulton's Five Simple Steps | >
+    >   
+
+END
+$html = <<END;
+<blockquote><p>From <a href='#BROKEN'>Mark Boulton’s Five Simple Steps</a>: With hanging punctuation the flow of text on the left hand side is uninterrupted. The bullets, glyphs or numbers sit in the gutter to highlight the list. This representation of a list is more sophisticated visually and more legible.</p></blockquote>
 END
 @data = (
         {

@@ -3,7 +3,7 @@ use warnings;
 
 use charnames qw( :full );
 
-use Test::More      tests => 16;
+use Test::More      tests => 20;
 require 't/testing.pl';
 
 use Readonly;
@@ -293,5 +293,47 @@ $html
     );
 %links = (
         'Google' => 'http://www.google.co.uk/',
+    );
+test_textframe( $document, $html, \@data, \%links, $ref_doc );
+
+
+# test that multiple unused reference links produce no output
+$document   = <<END;
+        The symbol used does not affect the document in any way. Generated
+        textframe documents will always use an asterisk.
+
+<Mark Boulton's Five Simple Steps | 
+    http://www.markboulton.co.uk/journal/comments/
+    five_simple_steps_to_better_typography_part_2/
+>
+<RFC 2396 | http://www.ietf.org/rfc/rfc2396.txt>
+END
+$ref_doc = <<END;
+        The symbol used does not affect the document in any way. Generated
+        textframe documents will always use an asterisk.
+
+END
+$html = <<END;
+<p>The symbol used does not affect the document in any way. Generated textframe documents will always use an asterisk.</p>
+END
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            text => [
+                {
+                    type => 'string',
+                    text => 'The symbol used does not affect the document in any way. Generated textframe documents will always use an asterisk.',
+                },
+            ],
+        },
+    );
+%links = (
+        "Mark Boulton's Five Simple Steps" => 'http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/',
+        'RFC 2396' => 'http://www.ietf.org/rfc/rfc2396.txt',
     );
 test_textframe( $document, $html, \@data, \%links, $ref_doc );
