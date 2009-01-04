@@ -35,10 +35,10 @@ $ref_doc = <<END;
         Second paragraph.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>First paragraph.</p>
 <p>Second paragraph.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -47,7 +47,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First paragraph.',
@@ -61,7 +61,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second paragraph.',
@@ -92,11 +92,11 @@ $ref_doc = <<END;
         Second paragraph.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>First paragraph.</p>
 <p>/* This is not completely * ignored. */</p>
 <p>Second paragraph.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -105,7 +105,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First paragraph.',
@@ -119,7 +119,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '/* This is not completely * ignored. */',
@@ -133,7 +133,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second paragraph.',
@@ -163,11 +163,11 @@ $ref_doc = <<END;
         Second paragraph.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>First paragraph.</p>
 <!-- This is not completely ignored. -->
 <p>Second paragraph.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -176,7 +176,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First paragraph.',
@@ -190,7 +190,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is not completely ignored.',
@@ -204,7 +204,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second paragraph.',

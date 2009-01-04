@@ -54,7 +54,7 @@ First level header
         Not a third level header.
 
 END
-$html = <<END;
+$html = <<HTML;
 <h1>First level header</h1>
 <h2>Second level header</h2>
 <h3>Third level header</h3>
@@ -62,7 +62,7 @@ $html = <<END;
 <h5>Fifth level header</h5>
 <h6>Sixth level header</h6>
 <p>Not a third level header.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -70,7 +70,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First level header',
@@ -84,7 +84,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second level header',
@@ -99,7 +99,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third level header',
@@ -115,7 +115,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Fourth level header',
@@ -132,7 +132,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Fifth level header',
@@ -150,7 +150,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Sixth level header',
@@ -164,7 +164,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Not a third level header.',
@@ -203,12 +203,12 @@ $ref_doc = <<END;
         Third level header.
 
 END
-$html = <<END;
+$html = <<HTML;
 <h3>Third level header</h3>
 <h3>Third level header.</h3>
 <h3>Third level header.</h3>
 <h3>Third level header.</h3>
-END
+HTML
 @data = (
         {
             context => [
@@ -218,7 +218,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third level header',
@@ -233,7 +233,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third level header.',
@@ -248,7 +248,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third level header.',
@@ -263,7 +263,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third level header.',

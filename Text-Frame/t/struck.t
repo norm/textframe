@@ -21,8 +21,9 @@ $document = <<END;
         A sentence with --some-- struck text.
 
 END
-$html        
-    = qq(<p>A sentence with <strike>some</strike> struck text.</p>\n);
+$html = <<HTML;
+<p>A sentence with <strike>some</strike> struck text.</p>
+HTML
 @data = (
         {
             context => [
@@ -31,7 +32,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -62,9 +63,9 @@ $document = <<END;
         A sentence with --two-- little --bits of-- struck text.
 
 END
-$html        
-    = q(<p>A sentence with <strike>two</strike> little )
-    . qq(<strike>bits of</strike> struck text.</p>\n);
+$html = <<HTML;
+<p>A sentence with <strike>two</strike> little <strike>bits of</strike> struck text.</p>
+HTML
 @data = (
         {
             context => [
@@ -73,7 +74,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -123,8 +124,9 @@ $ref_doc = <<END;
         A sentence with --wrapping struck-- text.
 
 END
-$html        
-    = qq(<p>A sentence with <strike>wrapping struck</strike> text.</p>\n);
+$html = <<HTML;
+<p>A sentence with <strike>wrapping struck</strike> text.</p>
+HTML
 @data = (
         {
             context => [
@@ -133,7 +135,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',

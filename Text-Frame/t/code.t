@@ -24,9 +24,9 @@ $document = <<END;
 
 END
 $ref_doc = $document;
-$html = <<END;
+$html = <<HTML;
 <p>A sentence with <code>some</code> code.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -35,7 +35,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -66,9 +66,9 @@ $document = <<END;
 
 END
 $ref_doc = $document;
-$html = <<END;
+$html = <<HTML;
 <p>A sentence with <code>two</code> little <code>bits of</code> code.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -77,7 +77,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -129,9 +129,9 @@ $document = <<END;
 
 END
 $ref_doc = $document;
-$html = <<END;
+$html = <<HTML;
 <p>A block of text to be treated as a raw block and where white space is treated as significant is marked by having double guillemets (<code>«</code> and <code>»</code>) or double angle brackets (<code>&lt;&lt;</code> and <code>&gt;&gt;</code>) alone on lines immediately before and after the block.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -140,7 +140,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A block of text to be treated as a raw block and where white space is treated as significant is marked by having double guillemets (',
@@ -198,7 +198,7 @@ $document = <<END;
         Second paragraph.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>First paragraph.</p>
 <pre><code class='perl'># copy arguments over
 foreach my \$key ( keys \%metadata ) {
@@ -206,7 +206,7 @@ foreach my \$key ( keys \%metadata ) {
 }
 </code></pre>
 <p>Second paragraph.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -215,7 +215,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First paragraph.',
@@ -229,7 +229,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',
@@ -243,7 +243,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second paragraph.',

@@ -22,9 +22,9 @@ $document = <<END;
 
 END
 $ref_doc = $document;
-$html = <<END;
+$html = <<HTML;
 <p>A simple paragraph block.</p>
-END
+HTML
 @data = ( 
         {
             context => [
@@ -33,7 +33,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     text => 'A simple paragraph block.',
                     type => 'string',

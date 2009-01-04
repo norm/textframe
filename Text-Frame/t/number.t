@@ -31,12 +31,12 @@ $ref_doc = <<END;
     2.  It has two items, and starts at one.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ol>
   <li><p>This document has a numbered list.</p></li>
   <li><p>It has two items, and starts at one.</p></li>
 </ol>
-END
+HTML
 @data = (
         {
             context => [
@@ -48,7 +48,7 @@ END
                 list_number => '#',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has a numbered list.',
@@ -65,7 +65,7 @@ END
                 list_number => '#',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'It has two items, and starts at one.',
@@ -90,12 +90,12 @@ $ref_doc = <<END;
     5.  It has two items, and starts at four.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ol start='4'>
   <li><p>This document has a numbered list.</p></li>
   <li><p>It has two items, and starts at four.</p></li>
 </ol>
-END
+HTML
 @data = (
         {
             context => [
@@ -107,7 +107,7 @@ END
                 list_number => '4',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has a numbered list.',
@@ -124,7 +124,7 @@ END
                 list_number => '#',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'It has two items, and starts at four.',
@@ -155,13 +155,13 @@ $ref_doc = <<END;
         significant.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ol>
   <li><p>This document has a numbered list.</p></li>
   <li><p>It has three items, and starts at one.</p></li>
   <li><p>Third item should be 3, since only the first number in a list is significant.</p></li>
 </ol>
-END
+HTML
 @data = (
         {
             context => [
@@ -173,7 +173,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has a numbered list.',
@@ -190,7 +190,7 @@ END
                 list_number => '10',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'It has three items, and starts at one.',
@@ -207,7 +207,7 @@ END
                 list_number => '11',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third item should be 3, since only the first number in a list is significant.',
@@ -228,7 +228,7 @@ $document = <<END;
     2.  Each list has one item and starts as 1.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ol start='3'>
   <li><p>This document has two numbered lists.</p></li>
 </ol>
@@ -236,7 +236,7 @@ $html = <<END;
 <ol start='2'>
   <li><p>Each list has one item and starts as 1.</p></li>
 </ol>
-END
+HTML
 @data = (
         {
             context => [
@@ -248,7 +248,7 @@ END
                 list_number => '3',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has two numbered lists.',
@@ -262,7 +262,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'It has a paragraph between them.',
@@ -279,7 +279,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Each list has one item and starts as 1.',
@@ -302,7 +302,7 @@ $document = <<END;
     2.  Back to the main list, and should be numbered two.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ol>
   <li><p>This document has a nested numbered list.</p>
   <ol>
@@ -312,7 +312,7 @@ $html = <<END;
   </li>
   <li><p>Back to the main list, and should be numbered two.</p></li>
 </ol>
-END
+HTML
 @data = (
         {
             context => [
@@ -324,7 +324,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has a nested numbered list.',
@@ -342,7 +342,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is the sub item.',
@@ -360,7 +360,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second sub item.',
@@ -377,7 +377,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Back to the main list, and should be numbered two.',
@@ -400,7 +400,7 @@ $document = <<END;
         2.  Back to the sub list.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ol>
   <li><p>This document has more nested numbered lists.</p>
   <ol>
@@ -413,7 +413,7 @@ $html = <<END;
   </ol>
   </li>
   </ol>
-END
+HTML
 @data = (
         {
             context => [
@@ -425,7 +425,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has more nested numbered lists.',
@@ -443,7 +443,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is the sub item.',
@@ -462,7 +462,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is the sub sub item.',
@@ -480,7 +480,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Back to the sub list.',
@@ -513,7 +513,7 @@ $document = <<END;
     2.  Back to the main list, and should be numbered two.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ol>
   <li><p>This document has a nested numbered list.</p>
   <ol>
@@ -534,7 +534,7 @@ $html = <<END;
   </li>
   <li><p>Back to the main list, and should be numbered two.</p></li>
 </ol>
-END
+HTML
 @data = (
         {
             context => [
@@ -546,7 +546,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has a nested numbered list.',
@@ -564,7 +564,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is the sub item.',
@@ -583,7 +583,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second sub list, first item.',
@@ -602,7 +602,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second sub list, second item.',
@@ -620,7 +620,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First sub list, second item.',
@@ -639,7 +639,7 @@ END
                 list_number => '1',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third sub list, first item.',
@@ -658,7 +658,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Third sub list, second item.',
@@ -676,7 +676,7 @@ END
                 list_number => '3',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First sub list, third item.',
@@ -693,7 +693,7 @@ END
                 list_number => '2',
                 no_header   => '1',
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Back to the main list, and should be numbered two.',
@@ -703,6 +703,7 @@ END
     );
 %links = ();
 test_textframe( $document, $html, \@data, \%links );
+
 
 # test opening too many lists by using bad indents
 # TODO

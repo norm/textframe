@@ -32,9 +32,9 @@ $ref_doc = <<END;
     >   Hello world.
 
 END
-$html = <<END;
+$html = <<HTML;
 <blockquote><p>Hello world.</p></blockquote>
-END
+HTML
 @data = (
         {
             context => [
@@ -43,7 +43,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',
@@ -67,9 +67,9 @@ $document = <<END;
 http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/
 >
 END
-$html = <<END;
+$html = <<HTML;
 <blockquote cite='http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'><p>With hanging punctuation the flow of text on the left hand side is uninterrupted. The bullets, glyphs or numbers sit in the gutter to highlight the list. This representation of a list is more sophisticated visually and more legible.</p></blockquote>
-END
+HTML
 @data = (
         {
             context => [
@@ -78,7 +78,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',
@@ -109,9 +109,9 @@ $ref_doc = <<END;
     >   This is a third paragraph.
 
 END
-$html = <<END;
+$html = <<HTML;
 <blockquote><p>This is a paragraph.</p> <p>This is a second paragraph.</p> <p>This is a third paragraph.</p></blockquote>
-END
+HTML
 @data = (
         {
             context => [
@@ -120,7 +120,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',
@@ -149,9 +149,9 @@ $ref_doc = <<END;
     >   Paragraph?
 
 END
-$html = <<END;
+$html = <<HTML;
 <blockquote><ul> <li><p>List item</p></li> <li><p>List item</p></li> </ul> <p>Paragraph?</p></blockquote>
-END
+HTML
 @data = (
         {
             context => [
@@ -160,7 +160,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',
@@ -189,9 +189,9 @@ $ref_doc = <<END;
     >   Paragraph?
 
 END
-$html = <<END;
+$html = <<HTML;
 <blockquote><ol> <li><p>List item</p></li> <li><p>List item</p></li> </ol> <p>Paragraph?</p></blockquote>
-END
+HTML
 @data = (
         {
             context => [
@@ -200,7 +200,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',
@@ -233,9 +233,9 @@ $ref_doc = <<END;
     >   
 
 END
-$html = <<END;
+$html = <<HTML;
 <blockquote><p>From <a href='#BROKEN'>Mark Boulton’s Five Simple Steps</a>: With hanging punctuation the flow of text on the left hand side is uninterrupted. The bullets, glyphs or numbers sit in the gutter to highlight the list. This representation of a list is more sophisticated visually and more legible.</p></blockquote>
-END
+HTML
 @data = (
         {
             context => [
@@ -244,7 +244,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',

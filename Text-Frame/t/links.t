@@ -25,9 +25,9 @@ $ref_doc = <<END;
 
 <Google | http://www.google.com/>
 END
-$html        
-    = q(<p>A basic link to <a)
-    . qq( href='http://www.google.com/'>Google</a>.</p>\n);
+$html = <<HTML;
+<p>A basic link to <a href='http://www.google.com/'>Google</a>.</p>
+HTML
 @data = (
         {
             context => [
@@ -36,7 +36,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A basic link to ',
@@ -70,9 +70,9 @@ $ref_doc = <<END;
 
 <Google | http://www.google.com/>
 END
-$html        
-    = q(<p>A basic link to <a)
-    . qq( href='http://www.google.com/'>Google</a>.</p>\n);
+$html = <<HTML;
+<p>A basic link to <a href='http://www.google.com/'>Google</a>.</p>
+HTML
 @data = (
         {
             context => [
@@ -81,7 +81,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A basic link to ',
@@ -120,9 +120,9 @@ $ref_doc = <<END;
 
 <The Google Homepage | http://www.google.com/>
 END
-$html        
-    = q(<p>A basic link to <a)
-    . qq( href='http://www.google.com/'>The Google Homepage</a>.</p>\n);
+$html = <<HTML;
+<p>A basic link to <a href='http://www.google.com/'>The Google Homepage</a>.</p>
+HTML
 @data = (
         {
             context => [
@@ -131,7 +131,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A basic link to ',

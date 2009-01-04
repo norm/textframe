@@ -31,9 +31,9 @@ $phrase = <<END;
         (...).
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>Three consecutive periods (<code>...</code>) will be changed to an ellipsis (${ELLIPSIS}).</p>
-END
+HTML
 $frame = Text::Frame->new( string => $phrase );
 ok( $html eq $frame->as_html() );
 
@@ -44,9 +44,9 @@ $phrase = <<END;
         (--), if there are no spaces between the words and the hyphens.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>A double hyphen (<code>--</code>) between words will be changed to an en-dash (${ENDASH}), if there are no spaces between the words and the hyphens.</p>
-END
+HTML
 $frame = Text::Frame->new( string => $phrase );
 ok( $html eq $frame->as_html() );
 
@@ -56,9 +56,9 @@ $phrase = <<END;
         A triple hyphen («---») will be changed to an em-dash (---).
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>A triple hyphen (<code>---</code>) will be changed to an em-dash (${EMDASH}).</p>
-END
+HTML
 $frame = Text::Frame->new( string => $phrase );
 ok( $html eq $frame->as_html() );
 
@@ -69,9 +69,9 @@ $phrase = <<END;
         converted to apostrophes (isn't).
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>Single quote characters within words (such as isn't) will be converted to apostrophes (isn${APOSTROPHE}t).</p>
-END
+HTML
 $frame = Text::Frame->new( string => $phrase );
 ok( $html eq $frame->as_html() );
 

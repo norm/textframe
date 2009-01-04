@@ -23,8 +23,9 @@ $document = <<END;
         A sentence with |raw| text.
 
 END
-$html        
-    = qq(<p>A sentence with raw text.</p>\n);
+$html = <<HTML;
+<p>A sentence with raw text.</p>
+HTML
 @data = (
         {
             context => [
@@ -33,7 +34,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -58,8 +59,9 @@ $document = <<END;
         A sentence with |two| little |bits of| raw text.
 
 END
-$html        
-    = qq(<p>A sentence with two little bits of raw text.</p>\n);
+$html = <<HTML;
+<p>A sentence with two little bits of raw text.</p>
+HTML
 @data = (
         {
             context => [
@@ -68,7 +70,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -101,8 +103,9 @@ $document = <<END;
         A sentence with |raw *not* emphasised text|.
 
 END
-$html        
-    = qq(<p>A sentence with raw *not* emphasised text.</p>\n);
+$html = <<HTML;
+<p>A sentence with raw *not* emphasised text.</p>
+HTML
 @data = (
         {
             context => [
@@ -111,7 +114,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -136,8 +139,9 @@ $document = <<END;
         A sentence with |raw <em>not linked</em> text|.
 
 END
-$html        
-    = qq(<p>A sentence with raw <em>not linked</em> text.</p>\n);
+$html = <<HTML;
+<p>A sentence with raw <em>not linked</em> text.</p>
+HTML
 @data = (
         {
             context => [
@@ -146,7 +150,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -171,9 +175,9 @@ $document = <<END;
         A sentence with |raw «not code» text|.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>A sentence with raw «not code» text.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -182,7 +186,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -223,11 +227,11 @@ $ref_doc = <<END;
         Second paragraph.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>First paragraph.</p>
 <div id='spesh'>In this section, white space is ignored, but no other interpolation occurs.</div>
 <p>Second paragraph.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -236,7 +240,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'First paragraph.',
@@ -250,7 +254,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => '',
@@ -264,7 +268,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Second paragraph.',

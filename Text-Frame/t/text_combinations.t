@@ -21,9 +21,9 @@ $document = <<END;
         A sentence with /some _very *deeply* nested_ emphasis/ in it.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>A sentence with <i>some <em>very <strong>deeply</strong> nested</em> emphasis</i> in it.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -32,7 +32,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -91,9 +91,9 @@ $document = <<END;
         A sentence with _some /very *deeply* nested/ emphasis_ in it.
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>A sentence with <em>some <i>very <strong>deeply</strong> nested</i> emphasis</em> in it.</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -102,7 +102,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -162,9 +162,9 @@ $document = <<END;
         end with star-slash (*/).
 
 END
-$html = <<END;
+$html = <<HTML;
 <p>Ignored comment blocks are started with the marker slash-star (/*) and end with star-slash (*/).</p>
-END
+HTML
 @data = (
         {
             context => [
@@ -173,7 +173,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Ignored comment blocks are started with the marker slash-star (/*) and end with star-slash (*/).',

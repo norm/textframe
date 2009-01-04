@@ -21,8 +21,9 @@ $document = <<END;
         A sentence with /some/ italic text.
 
 END
-$html        
-    = qq(<p>A sentence with <i>some</i> italic text.</p>\n);
+$html = <<HTML;
+<p>A sentence with <i>some</i> italic text.</p>
+HTML
 @data = (
         {
             context => [
@@ -31,7 +32,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -62,9 +63,9 @@ $document = <<END;
         A sentence with /two/ little /bits of/ italic text.
 
 END
-$html        
-    = q(<p>A sentence with <i>two</i> little )
-    . qq(<i>bits of</i> italic text.</p>\n);
+$html = <<HTML;
+<p>A sentence with <i>two</i> little <i>bits of</i> italic text.</p>
+HTML
 @data = (
         {
             context => [
@@ -73,7 +74,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',
@@ -123,8 +124,9 @@ $ref_doc = <<END;
         A sentence with /wrapping italic/ text.
 
 END
-$html        
-    = qq(<p>A sentence with <i>wrapping italic</i> text.</p>\n);
+$html = <<HTML;
+<p>A sentence with <i>wrapping italic</i> text.</p>
+HTML
 @data = (
         {
             context => [
@@ -133,7 +135,7 @@ $html
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'A sentence with ',

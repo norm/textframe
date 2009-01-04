@@ -25,12 +25,12 @@ $document = <<END;
     *   It has two items.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ul>
   <li><p>This document has a bulleted list.</p></li>
   <li><p>It has two items.</p></li>
 </ul>
-END
+HTML
 @data = (
         {
             context => [
@@ -41,7 +41,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has a bulleted list.',
@@ -57,7 +57,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'It has two items.',
@@ -76,12 +76,12 @@ $document = <<END;
     *   second item
 
 END
-$html = <<END;
+$html = <<HTML;
 <ul>
   <li><p>first item</p></li>
   <li><p>second item</p></li>
 </ul>
-END
+HTML
 @data = (
         {
             context => [
@@ -92,7 +92,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'first item',
@@ -108,7 +108,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'second item',
@@ -129,7 +129,7 @@ $document = <<END;
     *   Each list has one item.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ul>
   <li><p>This document has two bulleted lists.</p></li>
 </ul>
@@ -137,7 +137,7 @@ $html = <<END;
 <ul>
   <li><p>Each list has one item.</p></li>
 </ul>
-END
+HTML
 @data = (
         {
             context => [
@@ -148,7 +148,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has two bulleted lists.',
@@ -162,7 +162,7 @@ END
                 'block',
             ],
             metadata => {},
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'It has a paragraph between them.',
@@ -178,7 +178,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Each list has one item.',
@@ -199,7 +199,7 @@ $document = <<END;
     *   Back to the main list.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ul>
   <li><p>This document has a nested bulleted list.</p>
   <ul>
@@ -208,7 +208,7 @@ $html = <<END;
   </li>
   <li><p>Back to the main list.</p></li>
 </ul>
-END
+HTML
 @data = (
         {
             context => [
@@ -219,7 +219,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has a nested bulleted list.',
@@ -236,7 +236,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is the sub item.',
@@ -252,7 +252,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Back to the main list.',
@@ -275,7 +275,7 @@ $document = <<END;
         *   Back to the sub list.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ul>
   <li><p>This document has more nested bulleted lists.</p>
   <ul>
@@ -288,7 +288,7 @@ $html = <<END;
   </ul>
   </li>
   </ul>
-END
+HTML
 @data = (
         {
             context => [
@@ -299,7 +299,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This document has more nested bulleted lists.',
@@ -316,7 +316,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is the sub item.',
@@ -334,7 +334,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'This is the sub sub item.',
@@ -351,7 +351,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'Back to the sub list.',
@@ -386,7 +386,7 @@ $document = <<END;
     *   List item.
 
 END
-$html = <<END;
+$html = <<HTML;
 <ul>
   <li><p>List item.</p>
   <ul>
@@ -414,7 +414,7 @@ $html = <<END;
   </li>
   <li><p>List item.</p></li>
 </ul>
-END
+HTML
 @data = (
         {
             context => [
@@ -425,7 +425,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'List item.',
@@ -442,94 +442,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {
-                no_header => 1,
-            },
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {
-                no_header => 1,
-            },
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {
-                no_header => 1,
-            },
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {
-                no_header => 1,
-            },
-            text => [
-                {
-                    type => 'string',
-                    text => 'List item.',
-                },
-            ],
-        },
-        {
-            context => [
-                'indent',
-                'indent',
-                'bullet',
-                'block',
-            ],
-            metadata => {
-                no_header => 1,
-            },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'List item.',
@@ -547,7 +460,42 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
                 {
                     type => 'string',
                     text => 'List item.',
@@ -564,7 +512,59 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'List item.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
                 {
                     type => 'string',
                     text => 'List item.',
@@ -580,7 +580,7 @@ END
             metadata => {
                 no_header => 1,
             },
-            text => [
+            elements => [
                 {
                     type => 'string',
                     text => 'List item.',
