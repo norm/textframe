@@ -3,6 +3,8 @@ package Text::Frame::Block;
 use strict;
 use warnings;
 
+use utf8;
+
 use Text::Autoformat;
 
 our @plugin_after = qw( * );
@@ -13,9 +15,11 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_block     => \&detect_text_block );
-    $frame->add_trigger( output_as_text_block  => \&output_as_text    );
-    $frame->add_trigger( output_as_html_block  => \&output_as_html    );
+    $frame->add_trigger( detect_text_block   => \&detect_text_block );
+    
+    $frame->add_trigger( block_as_text_block => \&as_text           );
+    
+    $frame->add_trigger( block_as_html_block => \&as_html           );
 }
 
 
@@ -31,40 +35,66 @@ sub detect_text_block {
 }
 
 
-sub output_as_text {
-    my $self    = shift;
-    my $details = shift;
-    
-    my $text  = $details->{'text'};
-       $text =~ s{[\s\n]+}{ }gs;
-       $text  = autoformat 
-                   $text,
-                   { 
-                       left  => 0, 
-                       right => $details->{'right'},
-                   };
-    
-    $text =~ s{ \n\n $ }{}sx;
-    
-    $details->{'text'} = $text;
-}
-sub output_as_html {
+sub as_text {
     my $self    = shift;
     my $details = shift;
     my $count   = shift;
     my $block   = shift;
     my $next    = shift;
-    
-    # remove unnecessary whitespace
-    # TODO - what about preformatted text?
-    $details->{'text'}=~ s{[\s\n]+}{ }gs;
 
-    my $previous_element = @{ $block->{'context'} }[$count-1];
-    my $need_para        = 1;
+    my $is_paragraph  = 1;
+    my $is_blockquote = defined $details->{'blockquote_depth'};
     
-    $need_para = 0  if 'header' eq $previous_element;
+    foreach my $context ( @{ $block->{'context'} } ) {
+        $is_paragraph = 0  if  'block' ne $context 
+                           && 'indent' ne $context;
+    }
     
-    if ( $need_para ) {
+    if ( $is_paragraph ) {
+        my $indent = $is_blockquote 
+                         ? q(    ) 
+                         : q(        );
+        
+        $details->{'first_line'} = $indent;
+        $details->{'prefix'    } = $indent;
+        $details->{'right'     } = $details->{'original_right'} - 8;
+    }
+    
+    my $text  = $details->{'text'};
+    
+    if ( !defined $details->{'formatted'} ) {
+        $text =~ s{[\s\n]+}{ }gs;
+        $text  = autoformat 
+                    $text,
+                    { 
+                        left  => $details->{'left'} || 0, 
+                        right => $details->{'right'} || 78,
+                    };
+    }
+    
+    # remove the extra blank line at the end
+    $text =~ s{ \n\n $ }{}sx;
+    
+    $details->{'text'} = $text;
+}
+
+
+sub as_html {
+    my $self    = shift;
+    my $details = shift;
+    my $count   = shift;
+    my $block   = shift;
+    my $next    = shift;
+
+    # remove unnecessary whitespace
+    if ( !defined $details->{'formatted'} ) {
+        if ( defined $details->{'text'} ) {
+            $details->{'text'}=~ s{ [\s\n]+         }{ }gsx;
+            $details->{'text'}=~ s{^ \s* (.*?) \s* $}{$1}gsx;
+        }
+    }
+    
+    if ( !$details->{'no_paragraph'} ) {
         push @{ $details->{'start_tags'} }, '<p>';
         push @{ $details->{'end_tags'}   }, '</p>';
     }
