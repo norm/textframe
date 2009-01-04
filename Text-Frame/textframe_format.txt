@@ -15,7 +15,7 @@ The textframe file format
         White space
         
         White space in blocks of content is recognised to be spaces, tabs
-        and end of line characters. Other white space is treated as 
+        and end of line characters. Any other white space is treated as 
         content.
         
         
@@ -28,11 +28,11 @@ The textframe file format
         Blocks
         
         Blocks of content are high-level structural objects, such as
-        paragraphs, lists and headers. They are separated by a minimum of
-        one blank line (although it can contain white space). Multiple 
-        blank lines can be used for visual separation in the source document
-        but this does not influence the document structure, except in the 
-        case of hinting headings (see below).
+        paragraphs, lists and headers. They are separated by one blank line
+        (although it can contain white space).
+        
+        Multiple blank lines between blocks are used to indicate that the 
+        next block is a header. 
         
         
         Indentation
@@ -54,15 +54,15 @@ The textframe file format
         
         Punctuation
         
-        Textframe processing will convert some common short-hand characters
-        into correct punctuation characters.
+        Textframe processing will convert some common short-hand ASCII
+        representation of characters into the correct punctuation.
         
     *   three consecutive periods will be changed to an ellipsis
         
-    *   a double hyphen between words will be changed to an en-dash, if there
-        are no spaces between the words and the hyphens
+    *   a double hyphen («--») between words will be changed to an en-dash
+        (--), if there are no spaces between the words and the hyphens
         
-    *   a triple hyphen will be changed to an em-dash
+    *   a triple hyphen («---») will be changed to an em-dash (---).
         
     *   single quote characters within words will be converted to apostrophes
         
@@ -80,8 +80,8 @@ The textframe file format
         suited to managing.
         
         Any block which has no structural markers is treated as a paragraph.
-        Paragraphs must be indented by a minimum of two stops (ie. by
-        eight spaces).
+        Paragraphs can be indented to any level, but generated documents will
+        output paragraphs indented twice (ie. by eight spaces).
         
         
         Heading
@@ -107,7 +107,10 @@ The textframe file format
     *   if the header was preceded by multiple blank lines as separators
         
     *   if the first and last characters in the block are matching dashes
-        (-) or equals (=)
+        (-) or equals (=) characters
+        
+        Headings in generated textframe documents are always output with
+        double blank lines before them as the preferred hint.
         
         
         Bulleted lists
@@ -117,13 +120,12 @@ The textframe file format
         at the first stop, so the bullets are hanging compared to normal
         body text.
         
-    >   From <Mark Boulton's Five Simple Steps>:
+    From <Mark Boulton's Five Simple Steps>:
     >   With hanging punctuation the flow of text on the left hand side is
     >   uninterrupted. The bullets, glyphs or numbers sit in the gutter to
     >   highlight the list. This representation of a list is more 
     >   sophisticated visually and more legible.
 
-        
         The bullet symbol is one of:
         
     *   an asterisk (*)
@@ -143,9 +145,10 @@ The textframe file format
         Numbered lists are indicated the same as bulleted lists, except that
         the symbol is either:
         
-    *   a number followed by a period (.) to declare the number of that item
+    *   a number followed by a period (.), to declare the number of that item
         
-    *   a hash symbol (#) to have the number automatically incremented
+    *   a hash (#) followed by a period (.), to have the number set
+        automatically
         
         If the first item is a #, it is treated as 1. A list where the first
         item is a number that is not 1 will inform the parser that the list
@@ -158,6 +161,9 @@ The textframe file format
         A quotation which covers one or more blocks of content is indicated by
         prefixing the blocks with a close angle brace (>) one indent back,
         like list markers.
+        
+        You can 
+        Quotes can have a citation.
         
 /*      TODO:
  *      Need to explain how citations work for block comments.
@@ -196,23 +202,30 @@ The textframe file format
         
         A block of text to be included in the output that should be ignored
         by textframe for parsing purposes is indicated by prefixing the 
-        block with a vertical bar one indent back, like list markers. The
+        block with a vertical bar (|) one indent back, like list markers. The
         text within is copied verbatim to the output, except that white space
         is not treated as significant.
         
         
         Code (pre-formatted) blocks 
         
-        A block of text which is treated as a raw block and where white space
-        is treated as significant is marked by having double guillemets (« and
-        ») or double angle brackets (<< and >>) alone on lines immediately
-        before and after the block. An optional word can appear after the
-        opening guillemet on the first line, which indicates what type of
-        programming language the code represents.
+        A block of text to be treated as a raw block and where white space is
+        treated as significant is marked by having double guillemets (<<«>>
+        and <<»>>) or double angle brackets («<<» and «>>») alone on lines
+        immediately before and after the block. An optional word can appear
+        after the opening guillemet on the first line, which indicates what
+        type of programming language the code represents.
         
         In HTML, code blocks are output surrounded by the two elements 
         «<pre><code>». If a language indicator is present, that is applied
         as a class to the «<code>» element.
+        
+        « perl:
+            # copy arguments over
+            foreach my $key ( keys %metadata ) {
+                $details{ $key } = $metadata{ $key };
+            }
+        »
         
         
     Types of inline content
@@ -221,28 +234,33 @@ The textframe file format
         Emphasised text
         
         To emphasise words or phrases within a block, surround them with
-        matched asterisks or underscores (* or _). 
+        matched asterisks or underscores (* or _). Generated documents will
+        use underscores.
         
         HTML has a concept of strong emphasis---in textframe this is created
-        by emphasising text within emphasised text. This doesn't work by just
-        doubling the markers, it has to be a word or phrase within already
-        emphasised text. Further nesting is not supported.
+        by emphasising text within emphasised text. Using the alternate 
+        emphasis character (if you have used underscores for the outer
+        emphasised text, use asterisks for the strongly emphasised text,
+        and vice versa). Generated documents will use asterisks for the 
+        strong section, with underscores for the emphasised part.
+        
+        No further nesting of emphasis is supported.
         
         
         Italic text
         
         To italicise words or phrases, surround them with forward-slashes
         (/). Note, that in HTML italic text is created with the «<i>» 
-        element not «<em>» as they have different meanings, despite being
-        commonly rendered as italicised.
+        element not «<em>» as they have different meanings, despite both 
+        being commonly rendered in italics.
         
         
         Struck text
         
         To mark text as being struck out, surround it with double dashes.
         Note, that in HTML struck text is created with the «<strike>»
-        element not «<del>» as they have different meanings, despite being
-        commonly rendered the same.
+        element not «<del>» as they have different meanings, despite both
+        being commonly rendered the same.
         
         
         Links
@@ -268,7 +286,8 @@ The textframe file format
         If a textframe document contains more than one link to the same URI,
         that URI can be omitted from all but one of the links as long as they
         share the same link text. If link text is the same in more than one
-        link to different URIs, then the URI must always be present.
+        link to different URIs, then the URI must always be present otherwise
+        the wrong URI value may be used.
         
         
         Code
@@ -284,30 +303,6 @@ The textframe file format
         textframe parser as raw text to be passed through verbatim, surround
         it with vertical bars (|).
         
-        
-/* TODO
- *      Quotes
- *      Do we want inline quotations with cites?
- */
- 
-/* TODO
- *      Other HTML possibilities to explore:
- *  *   abbr
- *  *   dfn, samp, kbd, var
- *  *   cite
- *  *   sub, sup
- *  *   br
- *  *   definition lists
- *  *   images
- *  *   horizontal rules
- *  *   tables
- *
- */ 
-        
-/* TODO
- * Is having links flush-left like this enough to indicate it is a reference
- * link, not to be output as content, or should it be marked in another way?
- */
         
 <Mark Boulton's Five Simple Steps | 
     http://www.markboulton.co.uk/journal/comments/
