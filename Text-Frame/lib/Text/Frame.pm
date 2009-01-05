@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use utf8;
-use version;            our $VERSION = qv( '0.5.0' );
+use version;            our $VERSION = qv( '0.5.5' );
 
 use Class::Trigger;
 use IO::All -utf8;
