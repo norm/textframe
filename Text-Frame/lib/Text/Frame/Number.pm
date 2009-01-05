@@ -8,6 +8,8 @@ use utf8;
 use Readonly;
     Readonly my $CATEGORY   => 'number';
 
+our @plugin_before = qw( Block );
+
 
 
 sub initialise {

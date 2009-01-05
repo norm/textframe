@@ -477,6 +477,8 @@ sub sorted_plugins {
         my @before;
         my @after;
         
+        $sorted_plugins{ $plugin } = [];
+
         {
             ## no critic
             no strict 'refs';
@@ -484,43 +486,48 @@ sub sorted_plugins {
             @after  = @{"${CLASS_PREFIX}${plugin}::plugin_after"};
         }
         
-        BEFORE:
         foreach my $before ( @before ) {
-            if ( '*' eq $before ) {
-                BEFORE_PLUGIN:
-                foreach my $before_plugin ( @plugins ) {
-                    next BEFORE_PLUGIN if ( $before_plugin eq $plugin );
-                    $sorted_plugins{ $plugin }{ $before_plugin } = 1;
-                }
-            }
-            else {
-                $sorted_plugins{ $plugin }{ $before } = 1;
-            }
+            push @{ $sorted_plugins{ $plugin } }, $before;
         }
         
-        AFTER:
         foreach my $after ( @after ) {
-            if ( '*' eq $after ) {
-                AFTER_PLUGIN:
-                foreach my $after_plugin ( @plugins ) {
-                    next AFTER_PLUGIN if ( $after_plugin eq $plugin );
-                    $sorted_plugins{ $after_plugin }{ $plugin } = 1;
-                }
-            }
-            else {
-                $sorted_plugins{ $after }{ $plugin }  = 1;
-            }
+            push @{ $sorted_plugins{ $after } }, $plugin;
         }
     }
     
+    return $self->sorted_dependencies( \%sorted_plugins );
+}
+
+sub sorted_dependencies {
+    my $self   = shift;
+    my $values = shift;
+    my %depths;
+    
+    foreach my $item ( keys %$values ) {
+        $depths{ $item } = $self->dependency_depth( $item, $values );
+    }
+    
     return sort {
-            my $a_before_b = defined $sorted_plugins{ $a }{ $b };
-            my $b_before_a = defined $sorted_plugins{ $b }{ $a };
-            
-            return -1 if $a_before_b;
-            return  1 if $b_before_a;
-            return  0;
-        } @plugins;
+            return $depths{ $b } <=> $depths{ $a };
+        } keys %depths;
+}
+
+
+sub dependency_depth {
+    my $self   = shift;
+    my $item   = shift;
+    my $values = shift;
+    my $seen   = shift || {};
+    
+    return 0  if defined $seen->{$item};
+    
+    $seen->{$item} = 1;
+    my $depth = 0;
+    foreach my $child ( @{ $values->{ $item } } ) {
+        my $children = $self->dependency_depth( $child, $values, $seen );
+        $depth = $children if $children > $depth;
+    }
+    return $depth + 1;
 }
 
 

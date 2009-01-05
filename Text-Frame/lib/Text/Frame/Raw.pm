@@ -9,6 +9,8 @@ use Readonly;
 
 Readonly my $CATEGORY => 'raw';
 
+our @plugin_before = qw( Block );
+
 
 
 sub initialise {

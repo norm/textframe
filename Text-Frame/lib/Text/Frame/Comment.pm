@@ -3,7 +3,7 @@ package Text::Frame::Comment;
 use strict;
 use warnings;
 
-our @plugin_before = qw( * );
+our @plugin_before = qw( Block );
 
 
 

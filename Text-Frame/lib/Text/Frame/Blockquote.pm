@@ -9,6 +9,7 @@ use Readonly;
 
 Readonly my $CATEGORY => 'blockquote';
 
+our @plugin_before = qw( Block );
 
 
 sub initialise {

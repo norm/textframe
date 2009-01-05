@@ -23,8 +23,6 @@ Readonly my $HTML_GREATERTHAN   => '&gt;';
 Readonly my $HTML_AMPERSAND     => '&amp;';
 Readonly my $HTML_DOUBLEQUOTE   => '&quot;';
 
-our @plugin_after = qw( * );
-
 
 
 sub initialise {

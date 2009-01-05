@@ -5,7 +5,7 @@ use warnings;
 
 use utf8;
 
-our @plugin_before = qw( * );
+our @plugin_before = qw( Blockquote Bullet Header Number );
 
 
 

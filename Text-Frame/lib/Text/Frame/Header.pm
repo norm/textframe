@@ -5,6 +5,8 @@ use warnings;
 
 use utf8;
 
+our @plugin_before = qw( Block );
+
 
 
 sub initialise {

@@ -7,8 +7,6 @@ use utf8;
 
 use Text::Autoformat;
 
-our @plugin_after = qw( * );
-
 
 
 sub initialise {
