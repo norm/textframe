@@ -13,6 +13,7 @@ sub initialise {
     
     $frame->add_trigger( detect_text_block     => \&detect_ignored_comment  );
     $frame->add_trigger( detect_text_block     => \&detect_included_comment );
+    $frame->add_trigger( decode_html_comment   => \&add_html_comment        );
     
     $frame->add_trigger( block_as_text_comment => \&as_text                 );
     
@@ -76,6 +77,46 @@ sub detect_included_comment {
             );
     }
     return;
+}
+
+
+sub add_html_comment {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $string  = shift;
+    
+    $string =~ s{
+        ^
+            [<][!][-][-]
+            [ ]?
+            
+            (.*?)
+            
+            [ ]?
+            [-][-][>]
+        $
+    }{$1}sx;
+    
+    if ( defined $details->{'current_block'} ) {
+        $self->add_new_block( $details->{'current_block'} );
+    }
+
+    my %block = (
+            context => [
+                'indent',
+                'comment',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                    {
+                        type => 'string',
+                        text => $string,
+                    },
+                ],
+        );
+    $self->add_new_block( \%block );
 }
 
 

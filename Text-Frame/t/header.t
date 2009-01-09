@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 8;
+use Test::More      tests => 16;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -173,7 +173,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # # check header hints are parsed correctly
@@ -272,4 +272,4 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );

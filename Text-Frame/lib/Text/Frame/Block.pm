@@ -13,11 +13,13 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_block   => \&detect_text_block );
+    $frame->add_trigger( detect_text_block   => \&detect_text_block    );
+    $frame->add_trigger( decode_html_start_p => \&start_html_paragraph );
+    $frame->add_trigger( decode_html_end_p   => \&end_html_paragraph   );
     
-    $frame->add_trigger( block_as_text_block => \&as_text           );
+    $frame->add_trigger( block_as_text_block => \&as_text              );
     
-    $frame->add_trigger( block_as_html_block => \&as_html           );
+    $frame->add_trigger( block_as_html_block => \&as_html              );
 }
 
 
@@ -32,6 +34,41 @@ sub detect_text_block {
           );
 }
 
+
+sub start_html_paragraph {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+
+    if ( defined $details->{'current_block'} ) {
+        $self->add_new_block( $details->{'current_block'} );
+    }
+
+    my %block = (
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        );
+
+    $details->{'current_block'} = \%block;
+    $self->add_insert_point( $details->{'current_block'}{'elements'} );
+}
+sub end_html_paragraph {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+    
+    if ( defined $details->{'current_block'} ) {
+        $self->add_new_block( $details->{'current_block'} );
+        delete $details->{'current_block'};
+    }
+}
 
 sub as_text {
     my $self    = shift;

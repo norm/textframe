@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 20;
+use Test::More      tests => 40;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -11,6 +11,7 @@ use Text::Frame;
 my $document;
 my $html;
 my @data;
+my @ref_data;
 my %links;
 my $ref_doc;
 
@@ -41,8 +42,24 @@ HTML
             ],
         } 
     );
+@ref_data = ( 
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    text => 'A simple paragraph block.',
+                    type => 'string',
+                },
+            ],
+        } 
+    );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test that different indentations are still seen as paragraphs
@@ -53,7 +70,7 @@ END
 $data[0]{'context'} = [
         'block',
     ];
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, \@ref_data, \%links, $ref_doc );
 $document = <<END;
     A simple paragraph block.
 
@@ -62,7 +79,7 @@ $data[0]{'context'} = [
         'indent',
         'block',
     ];
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, \@ref_data, \%links, $ref_doc );
 $document = <<END;
             A simple paragraph block.
 
@@ -73,7 +90,7 @@ $data[0]{'context'} = [
         'indent',
         'block',
     ];
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, \@ref_data, \%links, $ref_doc );
 $document = <<END;
                                 A simple paragraph block.
 
@@ -89,4 +106,4 @@ $data[0]{'context'} = [
         'indent',
         'block',
     ];
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, \@ref_data, \%links, $ref_doc );

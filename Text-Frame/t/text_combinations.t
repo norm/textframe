@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 12;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -83,7 +83,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test nested italics and emphasis is parsed correctly
@@ -153,7 +153,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test an example that was previously interpreted as italics and emphasis
@@ -182,4 +182,4 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );

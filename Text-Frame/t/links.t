@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 12;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -11,6 +11,7 @@ use Text::Frame;
 my $document;
 my $html;
 my @data;
+my @ref_data;
 my %links;
 my $ref_doc;
 
@@ -44,7 +45,6 @@ HTML
                 {
                     type => 'link',
                     text => 'Google',
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -56,7 +56,7 @@ HTML
 %links = (
         'Google' => 'http://www.google.com/',
     );
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test links that span lines are correctly parsed
@@ -89,7 +89,6 @@ HTML
                 {
                     type => 'link',
                     text => 'Google',
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -101,7 +100,7 @@ HTML
 %links = (
         'Google' => 'http://www.google.com/',
     );
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test links that span lines are correctly parsed
@@ -139,7 +138,6 @@ HTML
                 {
                     type => 'link',
                     text => 'The Google Homepage',
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -151,4 +149,4 @@ HTML
 %links = (
         'The Google Homepage' => 'http://www.google.com/',
     );
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );

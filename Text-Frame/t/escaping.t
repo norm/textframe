@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 12;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -45,7 +45,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test an example that was previously interpreted as a link to ", "
@@ -76,7 +76,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test that text within code is still escaped
@@ -122,4 +122,4 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );

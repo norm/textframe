@@ -11,11 +11,15 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_string => \&detect_text_string );
+    $frame->add_trigger( detect_text_string       => \&detect_text_string );
+    $frame->add_trigger( decode_html_start_strike => \&start_html_strike  );
+    $frame->add_trigger( decode_html_start_s      => \&start_html_strike  );
+    $frame->add_trigger( decode_html_end_strike   => \&end_html_strike    );
+    $frame->add_trigger( decode_html_end_s        => \&end_html_strike    );
     
-    $frame->add_trigger( as_text_struck     => \&as_text            );
+    $frame->add_trigger( as_text_struck           => \&as_text            );
     
-    $frame->add_trigger( as_html_struck     => \&as_html            );
+    $frame->add_trigger( as_html_struck           => \&as_html            );
 }
 
 
@@ -68,6 +72,26 @@ sub detect_text_string {
     }
     
     return;
+}
+
+
+sub start_html_strike {
+    my $self    = shift;
+    my $details = shift;
+
+    my $insert  = $self->get_insert_point();
+    my %element = (
+            type => 'struck',
+            contents => [],
+        );
+
+    push @{ $insert }, \%element;
+    $self->add_insert_point( $element{'contents'} );
+}
+sub end_html_strike {
+    my $self    = shift;
+
+    $self->remove_insert_point();
 }
 
 

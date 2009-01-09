@@ -51,7 +51,14 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( {
+        input           => $document,
+        text            => $document,
+        html            => $html,
+        data            => \@data,
+        links           => \%links,
+        skip_html_tests => 1,
+    } );
 
 
 # test a simple sentence with two pieces of raw text
@@ -95,7 +102,14 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( {
+        input           => $document,
+        text            => $document,
+        html            => $html,
+        data            => \@data,
+        links           => \%links,
+        skip_html_tests => 1,
+    } );
 
 
 # test that emphasis within raw is not parsed
@@ -131,7 +145,14 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( {
+        input           => $document,
+        text            => $document,
+        html            => $html,
+        data            => \@data,
+        links           => \%links,
+        skip_html_tests => 1,
+    } );
 
 
 # test that links within raw are not parsed
@@ -167,7 +188,14 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( {
+        input           => $document,
+        text            => $document,
+        html            => $html,
+        data            => \@data,
+        links           => \%links,
+        skip_html_tests => 1,
+    } );
 
 
 # test that code within raw is not parsed
@@ -203,7 +231,14 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( {
+        input           => $document,
+        text            => $document,
+        html            => $html,
+        data            => \@data,
+        links           => \%links,
+        skip_html_tests => 1,
+    } );
 
 
 # test raw blocks
@@ -277,4 +312,11 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( {
+        input           => $document,
+        text            => $ref_doc,
+        html            => $html,
+        data            => \@data,
+        links           => \%links,
+        skip_html_tests => 1,
+    } );

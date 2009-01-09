@@ -17,16 +17,20 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_block   => \&detect_block_code  );
-    $frame->add_trigger( detect_text_string  => \&detect_inline_code );
+    $frame->add_trigger( detect_text_block      => \&detect_block_code  );
+    $frame->add_trigger( detect_text_string     => \&detect_inline_code );
+    $frame->add_trigger( decode_html_start_code => \&start_html_code    );
+    $frame->add_trigger( decode_html_end_code   => \&end_html_code      );
+    $frame->add_trigger( decode_html_start_pre  => \&start_html_pre     );
+    $frame->add_trigger( decode_html_end_pre    => \&end_html_pre       );
     
-    $frame->add_trigger( start_text_document => \&reset_count        );
-    $frame->add_trigger( block_as_text_code  => \&block_as_text      );
-    $frame->add_trigger( as_text_code        => \&as_text            );
+    $frame->add_trigger( start_text_document => \&reset_count           );
+    $frame->add_trigger( block_as_text_code  => \&block_as_text         );
+    $frame->add_trigger( as_text_code        => \&as_text               );
     
-    $frame->add_trigger( start_html_document => \&reset_count        );
-    $frame->add_trigger( block_as_html_code  => \&block_as_html      );
-    $frame->add_trigger( as_html_code        => \&as_html            );
+    $frame->add_trigger( start_html_document => \&reset_count           );
+    $frame->add_trigger( block_as_html_code  => \&block_as_html         );
+    $frame->add_trigger( as_html_code        => \&as_html               );
 }
 
 
@@ -171,6 +175,104 @@ sub detect_block_code {
     return;
 }
 
+
+sub start_html_code {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+    my @attr    = @_;
+    
+    if ( defined $details->{'in_pre'} ) {
+        if ( defined $details->{'current_block'} ) {
+            $self->add_new_block( $details->{'current_block'} );
+        }
+        
+        my $language;
+        foreach my $attribute ( @attr ) {
+            foreach my $key ( keys %{ $attribute } ) {
+                if ( 'class' eq $key ) {
+                    $language = $attribute->{ $key };
+                }
+            }
+        }
+        
+        my $count = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
+        $self->set_metadata( $CATEGORY, "language_${count}", $language    );
+        
+        my %block = (
+                context => [
+                    'indent',
+                    'code',
+                    'block',
+                ],
+                metadata => {},
+                elements => [],
+            );
+        
+        $details->{'current_block'} = \%block;
+        $self->add_insert_point( $details->{'current_block'}{'elements'} );
+    }
+    else {
+        my $insert  = $self->get_insert_point();
+        my %element = (
+                type => 'code',
+                contents => [],
+            );
+
+        push @{ $insert }, \%element;
+        $self->add_insert_point( $element{'contents'} );
+    }
+
+}
+sub end_html_code {
+    my $self    = shift;
+    my $details = shift;
+    
+    if ( !defined $details->{'in_pre'} ) {
+        $self->remove_insert_point();
+        
+        my $insert   = $self->get_insert_point();
+        my $block    = $insert->[$#$insert];
+        my $contents = $block->{'contents'};
+
+        $block->{'text'} = $self->block_as_text( undef, @{ $contents } );
+        
+        delete $block->{'contents'};
+    }
+}
+sub start_html_pre {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+
+    $details->{'in_pre'} = 1;
+}
+sub end_html_pre {
+    my $self    = shift;
+    my $details = shift;
+    
+    delete $details->{'in_pre'};
+    
+    my $insert = $self->get_insert_point();
+    my $last   = $insert->[ $#$insert ];
+    my $text   = $last->{'text'};
+
+    if ( defined $text ) {
+        delete $insert->[ $#$insert ];
+        my $count  = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
+        $self->set_metadata( $CATEGORY, "code_${count}",     $text        );
+        $self->set_metadata( $CATEGORY, 'current_block',     ($count + 1) );
+    }
+    
+    $self->remove_insert_point();
+
+    if ( defined $details->{'current_block'} ) {
+        $self->add_new_block( $details->{'current_block'} );
+        delete $details->{'current_block'};
+    }
+}
 
 sub as_text {
     my $self    = shift;

@@ -7,6 +7,7 @@ use utf8;
 use version;            our $VERSION = qv( '0.5.5' );
 
 use Class::Trigger;
+use HTML::Parser;
 use IO::All -utf8;
 use Module::Pluggable   require     => 1,
                         search_path => "Text::Frame";
@@ -27,6 +28,7 @@ sub new {
                     string   => '',
                     links    => {},
                     metadata => {},
+                    insert   => [],
                 };
     bless $self, $class;
     
@@ -52,14 +54,131 @@ sub new {
     # decode the string into the individual blocks
     my $string = $self->get_string();
     if ( defined $string ) {
-        $self->decode_entire_string( $string );
+        $self->decode_string( $string );
     }
     
     return $self;
 }
 
 
-sub decode_entire_string {
+sub decode_string {
+    my $self   = shift;
+    my $string = shift;
+    
+    if ( $string =~ m{^ \s* [<] [\w!]+ }sx ) {
+        $self->decode_html_string( $string );
+    }
+    else {
+        $self->decode_text_string( $string );
+    }
+}
+
+
+sub decode_html_string {
+    my $self   = shift;
+    my $string = shift;
+    
+    my %details = (
+            blocks         => [],
+        );
+    
+    my $html = HTML::Parser->new( 
+            api_version => 3,
+            handlers => {
+                start => [
+                    sub { 
+                        my $html = shift;
+                        my $tag  = shift;
+                        
+                        $self->call_trigger(
+                                "decode_html_start_${tag}",
+                                \%details,
+                                $html,
+                                $tag,
+                                @_
+                            );
+                    },
+                    'self, tagname, attr',
+                ],
+                end => [
+                    sub { 
+                        my $html = shift;
+                        my $tag  = shift;
+                
+                        $self->call_trigger(
+                                "decode_html_end_${tag}",
+                                \%details,
+                                $html,
+                                $tag,
+                                @_
+                            );
+                    },
+                    'self, tagname, attr',
+                ],
+                text => [
+                    sub { 
+                        my $html = shift;
+                    
+                        $self->call_trigger(
+                                "decode_html_string",
+                                \%details,
+                                $html,
+                                @_
+                            );
+                    },
+                    'self, text',
+                ],
+                comment => [
+                    sub { 
+                        my $html = shift;
+                        
+                        $self->call_trigger(
+                                "decode_html_comment",
+                                \%details,
+                                $html,
+                                @_
+                            );
+                    },
+                    'self, text',
+                ],
+            },
+        );
+    
+    $html->parse( $string );
+}
+sub add_new_block {
+    my $self = shift;
+    my $block = shift;
+    
+    $self->reset_insert_point();
+    $self->add_block( $block );
+}
+sub add_insert_point {
+    my $self  = shift;
+    my $point = shift;
+    
+    push @{ $self->{'insert'} }, $point;
+}
+sub remove_insert_point {
+    my $self = shift;
+    
+    pop @{ $self->{'insert'} };
+}
+sub get_insert_point {
+    my $self    = shift;
+
+    my $inserts = $self->{'insert'};
+    
+    return $inserts->[$#$inserts];
+}
+sub reset_insert_point {
+    my $self    = shift;
+    
+    $self->{'insert'} = [];
+}
+
+
+sub decode_text_string {
     my $self   = shift;
     my $string = shift;
     
@@ -226,8 +345,13 @@ sub store_link {
     my $uri  = shift;
     
     my $links = $self->{'links'};
+    my $link  = $links->{ $text };
     
-    if ( !defined $links->{ $text } ) {
+    if ( defined $link ) {
+        my $check_uri = $self->get_link( $text );
+        return 1  if ( $check_uri eq $uri );
+    }
+    else {
         $links->{ $text } = $uri;
         return 1;
     }
@@ -639,6 +763,11 @@ sub reset_blocks {
     my $self = shift;
     delete $self->{'blocks'};
 }
-
+sub add_block {
+    my $self  = shift;
+    my $block = shift;
+    
+    push @{ $self->{'blocks'} }, $block;
+}
 
 1;

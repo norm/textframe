@@ -3,9 +3,10 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 32;
+use Test::More      tests => 64;
 require 't/testing.pl';
 
+use Storable        qw( dclone );
 use Text::Frame;
 
 
@@ -13,6 +14,7 @@ use Text::Frame;
 my $document;
 my $html;
 my @data;
+my @html_data;
 my %links;
 my $ref_doc;
 
@@ -52,12 +54,12 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 $document = <<END;
         A sentence with <<some>> code.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test two code strings work correctly, with both marker types
@@ -102,22 +104,22 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 $document = <<END;
         A sentence with <<two>> little <<bits of>> code.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 $document = <<END;
         A sentence with «two» little <<bits of>> code.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 $document = <<END;
         A sentence with <<two>> little «bits of» code.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test an example that was previously interpreted incorrectly
@@ -181,7 +183,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test a simple code block, with both marker types
@@ -252,4 +254,6 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+delete $html_data[1]{'elements'}[0];
+test_textframe( $document, $html, \@data, \@html_data, \%links );

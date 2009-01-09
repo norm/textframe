@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 12;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -55,7 +55,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test two parts of italic text is parsed correctly
@@ -111,7 +111,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test italic text that wraps across lines is parsed correctly
@@ -158,4 +158,4 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );

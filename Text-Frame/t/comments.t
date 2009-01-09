@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 12;
+use Test::More      tests => 24;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -70,7 +70,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test comments still work within normal body text.
@@ -142,7 +142,7 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test comments still work within normal body text.
@@ -213,4 +213,4 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );

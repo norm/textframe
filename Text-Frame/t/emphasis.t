@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 48;
+use Test::More      tests => 96;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -56,12 +56,12 @@ END
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 $document = <<END;
         A sentence with *some emphasis*.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test that wrapping doesn't break emphasis
@@ -70,13 +70,13 @@ $document = <<END;
         emphasis_.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 $document = <<END;
         A sentence with *some 
         emphasis*.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test that the emphasis module correctly uses underscores in generated
@@ -134,22 +134,22 @@ END
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 $document = <<END;
         A sentence with *some emphasis* and *some more emphasis*.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 $document = <<END;
         A sentence with _some emphasis_ and *some more emphasis*.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 $document = <<END;
         A sentence with *some emphasis* and _some more emphasis_.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test nested emphasis creates strong in HTML and uses asterisks in text
@@ -206,12 +206,12 @@ END
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 $document = <<END;
         A sentence with *some _nested_ emphasis*.
 
 END
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # prove that three levels of emphasis does not work
@@ -253,7 +253,7 @@ END
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 $document = <<END;
         A sentence *with _three *levels* of_ emphasis* cannot work.
 
@@ -295,4 +295,4 @@ END
             ],
         },
     );
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );

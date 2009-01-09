@@ -29,14 +29,17 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_string => \&detect_text_string  );
+    $frame->add_trigger( detect_text_string   => \&detect_text_string  );
+    $frame->add_trigger( decode_html_string   => \&add_html_string     );
+    $frame->add_trigger( html_string_unescape => \&unescape_characters );
     
-    $frame->add_trigger( as_text_string     => \&as_text             );
+    $frame->add_trigger( as_text_string       => \&as_text             );
     
-    $frame->add_trigger( as_html_string     => \&as_html             );
-    $frame->add_trigger( html_string_escape => \&convert_punctuation );
-    $frame->add_trigger( html_string_escape => \&escape_characters   );
-    $frame->add_trigger( html_code_escape   => \&escape_characters   );
+    $frame->add_trigger( as_html_string       => \&as_html             );
+    $frame->add_trigger( html_string_escape   => \&convert_punctuation );
+    $frame->add_trigger( html_string_escape   => \&escape_characters   );
+    $frame->add_trigger( html_code_escape     => \&escape_characters   );
+    
 }
 
 
@@ -55,13 +58,32 @@ sub detect_text_string {
               undef,
           );
 }
+sub add_html_string {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $string  = shift;
+    
+    my $insert = $self->get_insert_point();
+    
+    if ( defined $insert ) {
+        $self->call_trigger( 
+                'html_string_unescape', 
+                \$string 
+            );
+        push @{ $insert }, {
+                type => 'string',
+                text => $string,
+            };
+    }
+}
 
 
 sub as_text {
     my $self  = shift;
     my $item  = shift;
     my $block = shift;
-
+    
     $$block .= $item->{'text'};
 }
 sub as_html {
@@ -129,5 +151,15 @@ sub escape_characters {
     $$text =~ s{ ["] }{$HTML_DOUBLEQUOTE}gsx;
 }
 
+
+sub unescape_characters {
+    my $self = shift;
+    my $text = shift;
+    
+    $$text =~ s{ $HTML_AMPERSAND   }{&}gsx;
+    $$text =~ s{ $HTML_LESSTHAN    }{<}gsx;
+    $$text =~ s{ $HTML_GREATERTHAN }{>}gsx;
+    $$text =~ s{ $HTML_DOUBLEQUOTE }{"}gsx;
+}
 
 1;

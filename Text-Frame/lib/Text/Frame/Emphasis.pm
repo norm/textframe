@@ -13,11 +13,15 @@ sub initialise {
     
     $frame->set_metadata( 'emphasis', 'use_asterisks', 0 );
     
-    $frame->add_trigger( detect_text_string => \&detect_text_string );
+    $frame->add_trigger( detect_text_string       => \&detect_text_string );
+    $frame->add_trigger( decode_html_start_em     => \&start_html_emphasis  );
+    $frame->add_trigger( decode_html_end_em       => \&end_html_emphasis    );
+    $frame->add_trigger( decode_html_start_strong => \&start_html_emphasis  );
+    $frame->add_trigger( decode_html_end_strong   => \&end_html_emphasis    );
     
-    $frame->add_trigger( as_text_emphasis   => \&as_text            );
+    $frame->add_trigger( as_text_emphasis         => \&as_text            );
     
-    $frame->add_trigger( as_html_emphasis   => \&as_html            );
+    $frame->add_trigger( as_html_emphasis         => \&as_html            );
 }
 
 
@@ -72,6 +76,29 @@ sub detect_text_string {
     }
     
     return;
+}
+
+
+sub start_html_emphasis {
+    my $self    = shift;
+    my $details = shift;
+
+    my $insert  = $self->get_insert_point();
+    my %element = (
+            type => 'emphasis',
+            contents => [],
+        );
+
+    push @{ $insert }, \%element;
+    $self->add_insert_point( $element{'contents'} );
+}
+sub end_html_emphasis  {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+
+    $self->remove_insert_point();
 }
 
 

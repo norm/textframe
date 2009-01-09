@@ -12,6 +12,8 @@ sub initialise {
     my $frame = shift;
     
     $frame->add_trigger( detect_text_string   => \&detect_text_string );
+    $frame->add_trigger( decode_html_start_a => \&start_html_link     );
+    $frame->add_trigger( decode_html_end_a   => \&end_html_link       );
     
     $frame->add_trigger( as_text_link         => \&as_text            );
     $frame->add_trigger( format_document_text => \&reference_links    );
@@ -72,19 +74,69 @@ sub detect_text_string {
                 $uri = q();
             }
         }
+
+        my %hash = (
+                type => 'link',
+                text => $text
+            );
+        
+        $hash{'uri'} = $uri  if q() ne $uri;
         
         return(
                 $before,
-                {
-                    type => 'link',
-                    text => $text,
-                    uri  => $uri,
-                },
+                \%hash,
                 $after,
             );
     }
     
     return;
+}
+
+
+sub start_html_link {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+    my @attr    = @_;
+    
+    my $uri;
+    foreach my $attribute ( @attr ) {
+        foreach my $key ( keys %{ $attribute } ) {
+            if ( 'href' eq $key ) {
+                $uri = $attribute->{ $key };
+            }
+        }
+    }
+    
+    if ( defined $uri ) {
+        my $insert  = $self->get_insert_point();
+        my %element = (
+                type => 'link',
+                contents => [],
+                uri => $uri,
+            );
+
+        push @{ $insert }, \%element;
+        $self->add_insert_point( $element{'contents'} );
+    }
+}
+sub end_html_link {
+    my $self = shift;
+    
+    $self->remove_insert_point();
+    
+    my $insert   = $self->get_insert_point();
+    my $block    = $insert->[$#$insert];
+    my $contents = $block->{'contents'};
+    
+    $block->{'text'} = $self->block_as_text( undef, @{ $contents } );
+    
+    if ( $self->store_link( $block->{'text'}, $block->{'uri'} ) ) {
+        delete $block->{'uri'};
+    }
+    
+    delete $block->{'contents'};
 }
 
 

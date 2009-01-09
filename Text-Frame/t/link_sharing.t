@@ -3,20 +3,20 @@ use warnings;
 
 use charnames qw( :full );
 
-use Test::More      tests => 20;
+use Test::More      tests => 40;
 require 't/testing.pl';
 
-use Readonly;
+use Storable        qw( dclone );
 use Text::Frame;
-
-Readonly my $APOSTROPHE => "\N{RIGHT SINGLE QUOTATION MARK}";
 
 
 
 my $document;
 my $html;
 my @data;
+my @html_data;
 my %links;
+my %html_links;
 my $ref_doc;
 
 
@@ -46,7 +46,6 @@ HTML
                 {
                     type => 'link',
                     text => 'Google',
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -59,21 +58,20 @@ HTML
 %links = (
         'Google' => 'http://www.google.com/',
     );
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test both lengthy referential links, and wrapping in the link text
 $document = <<END;
-        This document has a link to an article <Mark Boulton's Five Simple
-        Steps>. But the URI of the link is postponed until later for
-        readability.
+        This document has a link to an article <Five Simple Steps>. But the
+        URI of the link is postponed until later for readability.
 
-<Mark Boulton's Five Simple Steps |
+<Five Simple Steps |
 http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/
 >
 END
 $html = <<HTML;
-<p>This document has a link to an article <a href='http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'>Mark Boulton${APOSTROPHE}s Five Simple Steps</a>. But the URI of the link is postponed until later for readability.</p>
+<p>This document has a link to an article <a href='http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'>Five Simple Steps</a>. But the URI of the link is postponed until later for readability.</p>
 HTML
 @data = (
         {
@@ -90,8 +88,7 @@ HTML
                 },
                 {
                     type => 'link',
-                    text => "Mark Boulton's Five Simple Steps",
-                    uri  => '',
+                    text => "Five Simple Steps",
                 },
                 {
                     type => 'string',
@@ -102,9 +99,9 @@ HTML
         },
     );
 %links       = (
-        "Mark Boulton's Five Simple Steps" => 'http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/',
+        "Five Simple Steps" => 'http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/',
     );
-test_textframe( $document, $html, \@data, \%links );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test that reference links correctly expand out (even if the result would
@@ -151,7 +148,6 @@ HTML
                 {
                     type => 'link',
                     text => 'Google',
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -197,7 +193,6 @@ HTML
                 {
                     type => 'link',
                     text => "Google",
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -209,7 +204,7 @@ HTML
 %links       = (
         "Google" => 'http://www.google.com/',
     );
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test that reference links with shared link text are correctly
@@ -249,7 +244,6 @@ HTML
                 {
                     type => 'link',
                     text => 'Google',
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -272,7 +266,6 @@ HTML
                 {
                     type => 'link',
                     text => 'Google',
-                    uri  => '',
                 },
                 {
                     type => 'string',
@@ -284,7 +277,7 @@ HTML
 %links = (
         'Google' => 'http://www.google.co.uk/',
     );
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test that multiple unused reference links produce no output
@@ -326,4 +319,13 @@ HTML
         "Mark Boulton's Five Simple Steps" => 'http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/',
         'RFC 2396' => 'http://www.ietf.org/rfc/rfc2396.txt',
     );
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+%html_links = ();
+test_textframe( {
+        input          => $document,
+        text_text      => $ref_doc,
+        html           => $html,
+        html_text      => $ref_doc,
+        data           => \@data,
+        links          => \%links,
+        html_links     => \%html_links,
+    } );

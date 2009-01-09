@@ -19,6 +19,14 @@ sub initialise {
     $frame->add_trigger( format_block_text    => \&format_header     );
     
     $frame->add_trigger( block_as_html_header => \&as_html           );
+    
+    foreach my $element qw( h1 h2 h3 h4 h5 h6 ) {
+        my $start = "decode_html_start_${element}";
+        my $end   = "decode_html_end_${element}";
+        
+        $frame->add_trigger( $start => \&start_html_header );
+        $frame->add_trigger( $end   => \&end_html_header   );
+    }
 }
 
 
@@ -84,6 +92,49 @@ sub as_html {
     $details->{'no_paragraph'} = 1;
     push @{ $details->{'start_tags'} }, "<h${level}>";
     push @{ $details->{'end_tags'}   }, "</h${level}>";
+}
+
+
+sub start_html_header {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+
+    if ( defined $details->{'current_block'} ) {
+        $self->add_new_block( $details->{'current_block'} );
+    }
+
+    my %block = (
+            context => [
+                'header',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        );
+
+    $tag =~ m{ h(\d) }x;
+    my $indent = $1 - 1;
+
+    while ( $indent > 0 ) {
+        unshift @{ $block{'context'} }, 'indent';
+        $indent--;
+    }
+
+    $details->{'current_block'} = \%block;
+    $self->add_insert_point( $details->{'current_block'}{'elements'} );
+}
+sub end_html_header {
+    my $self = shift;
+    my $details = shift;
+    my $html = shift;
+    my $tag  = shift;
+    
+    if ( defined $details->{'current_block'} ) {
+        $self->add_new_block( $details->{'current_block'} );
+        delete $details->{'current_block'};
+    }
 }
 
 
