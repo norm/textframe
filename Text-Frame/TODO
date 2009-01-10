@@ -1,13 +1,61 @@
-
-    *   Write some decent tests.
     
-    *   Blockquotes trigger a sub-document parsed as per the normal document,
-        which is also then printed as per. Means restricting the width
-        of the sub-document in some way for textual printing.
-
-    *   Double blank line previous hinting for headers.
-
-    *   List items without punctuation are being marked as headers, this
-        is incorrect.
+    *   Link.pm gets the text from the sub-elements after it closes,
+        flattens the text down and removes the content element. 
         
-    *   Allow individual list items to be nestled rather than separated?
+    *   REWRITE ALL SECTIONS THAT ARE:
+    
+            my $insert  = $self->get_insert_point();
+            my %element = (
+                    type => 'link',
+                    contents => [],
+                    uri => $uri,
+                );
+
+            push @{ $insert }, \%element;
+            $self->add_insert_point( $element{'contents'} );
+    
+        OR SIMILAR TO USE A ROUTINE IN Frame.pm FOR ROBUSTNESS.
+        
+        --------------------------------------------------------------
+
+    *   Finish writing the tests.
+
+    *   Write tests for the internal functions of Frame.pm, as well as
+        the actual textframe documents.
+    
+    *   Provide a push-back mechanism so that a block can add new 
+        blocks to the tree; this would allow individual list items to be 
+        nestled rather than separated by blank lines
+    
+    *   Allow the $frame object to be re-used, and plugins to reset their
+        state (eg. %links used in Link.pm).
+        
+    *   Implement a neater formatting option (especially for lengthy 
+        reference links).
+
+    *   Check for "magic numbers".
+
+    *   Use caller() in get/set_metadata routine to autoset the category,
+        unless specified (to allow Blockquote to get at Link metadata).
+    
+    *   Other HTML possibilities to explore:
+        *   abbr
+        *   dfn, samp, kbd, var
+        *   cite
+        *   sub, sup
+        *   br
+        *   definition lists
+        *   images
+        *   horizontal rules
+        *   tables
+    
+    *   Refactor the HTML list output routines to be more comprehensible.
+    
+    *   Command-line script to convert textframe document to HTML (pipeable).
+    
+    *   Indented text after a list item is a continuation of the previous
+        list item.
+    
+    *   Use the current data structure for metadata, rather than a separate
+        one accessed via functions?
+    
