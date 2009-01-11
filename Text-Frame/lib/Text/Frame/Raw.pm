@@ -17,20 +17,22 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_block   => \&detect_block_code  );
-    $frame->add_trigger( detect_text_string  => \&detect_inline_code );
+    $frame->add_trigger( detect_text_block   => \&detect_block_raw  );
+    $frame->add_trigger( detect_text_string  => \&detect_inline_raw );
+    # NB. there is no way of detecting "raw" HTML inside HTML
+    # documents, so there are no HTML imports for this module
     
-    $frame->add_trigger( start_text_document => \&reset_count        );
-    $frame->add_trigger( block_as_text_raw   => \&block_as_text      );
-    $frame->add_trigger( as_text_raw         => \&as_text            );
+    $frame->add_trigger( start_text_document => \&reset_count       );
+    $frame->add_trigger( block_as_text_raw   => \&block_as_text     );
+    $frame->add_trigger( as_text_raw         => \&as_text           );
     
-    $frame->add_trigger( start_html_document => \&reset_count        );
-    $frame->add_trigger( block_as_html_raw   => \&block_as_html      );
-    $frame->add_trigger( as_html_raw         => \&as_html            );
+    $frame->add_trigger( start_html_document => \&reset_count       );
+    $frame->add_trigger( block_as_html_raw   => \&block_as_html     );
+    $frame->add_trigger( as_html_raw         => \&as_html           );
 }
 
 
-sub detect_block_code {
+sub detect_block_raw {
     my $self     = shift;
     my $block    = shift;
     my $previous = shift;
@@ -56,7 +58,7 @@ sub detect_block_code {
     
     return;
 }
-sub detect_inline_code {
+sub detect_inline_raw {
     my $self   = shift;
     my $string = shift;
     
@@ -131,9 +133,6 @@ sub as_html {
 sub block_as_html {
     my $self        = shift;
     my $details     = shift;
-    my $block_count = shift;
-    my $block       = shift;
-    my $next        = shift;
     
     my $count     = $self->get_metadata( $CATEGORY, 'current_block' );
     my $raw_block = $self->get_metadata( $CATEGORY, $count          );

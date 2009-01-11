@@ -38,37 +38,33 @@ sub detect_text_block {
 sub start_html_paragraph {
     my $self    = shift;
     my $details = shift;
-    my $html    = shift;
-    my $tag     = shift;
-
-    if ( defined $details->{'current_block'} ) {
-        $self->add_new_block( $details->{'current_block'} );
+    
+    if ( !$details->{'in_list'} ) {
+        $self->add_new_html_block( $details );
+        
+        my %block = (
+                context => [
+                    'indent',
+                    'indent',
+                    'block',
+                ],
+                metadata => {},
+                elements => [],
+            );
+        
+        $details->{'current_block'} = \%block;
+        $self->add_insert_point( $details->{'current_block'}{'elements'} );
     }
-
-    my %block = (
-            context => [
-                'indent',
-                'indent',
-                'block',
-            ],
-            metadata => {},
-            elements => [],
-        );
-
-    $details->{'current_block'} = \%block;
-    $self->add_insert_point( $details->{'current_block'}{'elements'} );
 }
 sub end_html_paragraph {
     my $self    = shift;
     my $details = shift;
-    my $html    = shift;
-    my $tag     = shift;
     
-    if ( defined $details->{'current_block'} ) {
-        $self->add_new_block( $details->{'current_block'} );
-        delete $details->{'current_block'};
+    if ( !$details->{'in_list'} ) {
+        $self->add_new_html_block( $details );
     }
 }
+
 
 sub as_text {
     my $self    = shift;
@@ -86,8 +82,8 @@ sub as_text {
     }
     
     if ( $is_paragraph ) {
-        my $indent = $is_blockquote 
-                         ? q(    ) 
+        my $indent = $is_blockquote
+                         ? q(    )
                          : q(        );
         
         $details->{'first_line'} = $indent;
@@ -95,7 +91,7 @@ sub as_text {
         $details->{'right'     } = $details->{'original_right'} - 8;
     }
     
-    my $text  = $details->{'text'};
+    my $text = $details->{'text'};
     
     if ( !defined $details->{'formatted'} ) {
         $text =~ s{[\s\n]+}{ }gs;
@@ -117,9 +113,6 @@ sub as_text {
 sub as_html {
     my $self    = shift;
     my $details = shift;
-    my $count   = shift;
-    my $block   = shift;
-    my $next    = shift;
 
     # remove unnecessary whitespace
     if ( !defined $details->{'formatted'} ) {

@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 24;
+use Test::More      tests => 32;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -16,7 +16,45 @@ my %links;
 my $ref_doc;
 
 
-# test links are parsed correctly
+# test links without titles are parsed correctly
+$document = <<END;
+        A basic link to <http://www.google.com/>.
+
+END
+$html = <<HTML;
+<p>A basic link to <a href='http://www.google.com/'>http://www.google.com/</a>.</p>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'A basic link to ',
+                },
+                {
+                    type => 'link',
+                    text => 'http://www.google.com/',
+                },
+                {
+                    type => 'string',
+                    text => '.',
+                },
+            ],
+        },
+    );
+%links = (
+        'http://www.google.com/' => 'http://www.google.com/',
+    );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
+
+
+# test links with titles are parsed correctly
 $document = <<END;
         A basic link to <Google | http://www.google.com/>.
 

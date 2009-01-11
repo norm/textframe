@@ -13,11 +13,15 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_block    => \&detect_text_block );
+    $frame->add_trigger( detect_text_block    => \&detect_text_block    );
+    $frame->add_trigger( decode_html_start_ul => \&start_html_list      );
+    $frame->add_trigger( decode_html_end_ul   => \&end_html_list        );
+    $frame->add_trigger( decode_html_start_li => \&start_html_list_item );
+    $frame->add_trigger( decode_html_end_li   => \&end_html_list_item   );
     
-    $frame->add_trigger( block_as_text_bullet => \&as_text           );
+    $frame->add_trigger( block_as_text_bullet => \&as_text              );
     
-    $frame->add_trigger( block_as_html_bullet => \&as_html           );
+    $frame->add_trigger( block_as_html_bullet => \&as_html              );
 }
 
 
@@ -72,6 +76,61 @@ sub detect_text_block {
 }
 
 
+sub start_html_list {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+    
+    $self->add_new_html_block( $details );
+    
+    push @{ $details->{'list_type'} }, 'bullet';
+    $details->{'in_list'}++;
+}
+sub end_html_list {
+    my $self    = shift;
+    my $details = shift;
+
+    $details->{'in_list'}--;
+    pop @{ $details->{'list_type'} };
+}
+sub start_html_list_item {
+    my $self    = shift;
+    my $details = shift;
+    
+    my $types = $details->{'list_type'};
+    my $type  = $types->[ $#$types ];
+    
+    if ( 'bullet' eq $type ) {
+        $self->add_new_html_block( $details );
+        
+        my %block = (
+                context => [
+                    'bullet',
+                    'block',
+                ],
+                metadata => {},
+                elements => [],
+            );
+        
+        my $indent = $details->{'in_list'};
+        while ( $indent > 0 ) {
+            unshift @{ $block{'context'} }, 'indent';
+            $indent--;
+        }
+
+        $details->{'current_block'} = \%block;
+        $self->add_insert_point( $details->{'current_block'}{'elements'} );
+    }
+}
+sub end_html_list_item {
+    my $self    = shift;
+    my $details = shift;
+    
+    $self->add_new_html_block( $details );
+}
+
+
 sub as_text {
     my $self    = shift;
     my $details = shift;
@@ -97,7 +156,7 @@ sub as_html {
     my $highest_count = ( $#{ $next->{'context'} } > $count )
                             ? $#{ $next->{'context'} }
                             : $count;
-    foreach my $slice ( 0..$highest_count ) {
+    foreach my $slice ( 0 .. $highest_count ) {
         my $this_slice = ${ $block->{'context'} }[$slice];
         my $next_slice = ${  $next->{'context'} }[$slice];
         

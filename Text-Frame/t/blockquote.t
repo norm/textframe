@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 24;
+use Test::More      tests => 56;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -12,8 +12,11 @@ use Text::Frame;
 
 my $document;
 my $html;
+my $html_text;
 my @data;
+my @html_data;
 my %links;
+my %html_links;
 my $ref_doc;
 
 
@@ -43,16 +46,11 @@ HTML
                 'block',
             ],
             metadata => {},
-            elements => [
-                {
-                    type => 'string',
-                    text => '',
-                },
-            ],
+            elements => [],
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # # test a quoted paragraph with citation
@@ -70,6 +68,14 @@ END
 $html = <<HTML;
 <blockquote cite='http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'><p>With hanging punctuation the flow of text on the left hand side is uninterrupted. The bullets, glyphs or numbers sit in the gutter to highlight the list. This representation of a list is more sophisticated visually and more legible.</p></blockquote>
 HTML
+$html_text = <<END;
+    From <http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/>:
+    >   With hanging punctuation the flow of text on the left hand side is
+    >   uninterrupted. The bullets, glyphs or numbers sit in the gutter to
+    >   highlight the list. This representation of a list is more
+    >   sophisticated visually and more legible.
+
+END
 @data = (
         {
             context => [
@@ -78,18 +84,24 @@ HTML
                 'block',
             ],
             metadata => {},
-            elements => [
-                {
-                    type => 'string',
-                    text => '',
-                },
-            ],
+            elements => [],
         },
     );
 %links = (
         'Mark Boulton\'s Five Simple Steps' => 'http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'
     );
-test_textframe( $document, $html, \@data, \%links );
+%html_links = (
+    'http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/' => 'http://www.markboulton.co.uk/journal/comments/five_simple_steps_to_better_typography_part_2/'
+    );
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html_text  => $html_text,
+        html       => $html,
+        data       => \@data,
+        links      => \%links,
+        html_links => \%html_links,
+    } );
 
 
 # # test multiple quoted items
@@ -120,18 +132,13 @@ HTML
                 'block',
             ],
             metadata => {},
-            elements => [
-                {
-                    type => 'string',
-                    text => '',
-                },
-            ],
+            elements => [],
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
-
+# 
 # test different types of quoted items - bullets
 $document = <<END;
     >   *   List item
@@ -160,16 +167,11 @@ HTML
                 'block',
             ],
             metadata => {},
-            elements => [
-                {
-                    type => 'string',
-                    text => '',
-                },
-            ],
+            elements => [],
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test different types of quoted items - numbered items
@@ -200,16 +202,11 @@ HTML
                 'block',
             ],
             metadata => {},
-            elements => [
-                {
-                    type => 'string',
-                    text => '',
-                },
-            ],
+            elements => [],
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 
 # test that a normal paragraph starting like a blockquote doesn't match
@@ -228,9 +225,14 @@ $ref_doc = <<END;
     >   bullets, glyphs or numbers sit in the gutter to highlight the list.
     >   This representation of a list is more sophisticated visually and
     >   more legible.
-    >   
-    >   <Mark Boulton's Five Simple Steps | >
-    >   
+
+END
+$html_text = <<END;
+    >   From <Mark Boulton’s Five Simple Steps>: With hanging punctuation
+    >   the flow of text on the left hand side is uninterrupted. The
+    >   bullets, glyphs or numbers sit in the gutter to highlight the list.
+    >   This representation of a list is more sophisticated visually and
+    >   more legible.
 
 END
 $html = <<HTML;
@@ -244,13 +246,45 @@ HTML
                 'block',
             ],
             metadata => {},
-            elements => [
-                {
-                    type => 'string',
-                    text => '',
-                },
-            ],
+            elements => [],
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+%html_links = (
+        'Mark Boulton’s Five Simple Steps' => '#BROKEN'
+    );
+test_textframe( {
+        input      => $document,
+        text       => $ref_doc,
+        html       => $html,
+        html_text  => $html_text,
+        data       => \@data,
+        links      => \%links,
+        html_links => \%html_links,
+    } );
+
+
+# test that a citation when converted from HTML doesn't produce a ghost link
+$document = <<END;
+    From <http://quoted.com/>:
+    >   Something quoted.
+
+END
+$html = <<HTML;
+<blockquote cite='http://quoted.com/'><p>Something quoted.</p></blockquote>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'blockquote',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        },
+    );
+%links = (
+        'http://quoted.com/' => 'http://quoted.com/'
+    );
+test_textframe( $document, $html, \@data, undef, \%links );

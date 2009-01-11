@@ -16,18 +16,22 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_block    => \&detect_text_block );
+    $frame->add_trigger( detect_text_block    => \&detect_text_block    );
+    $frame->add_trigger( decode_html_start_ol => \&start_html_list      );
+    $frame->add_trigger( decode_html_end_ol   => \&end_html_list        );
+    $frame->add_trigger( decode_html_start_li => \&start_html_list_item );
+    $frame->add_trigger( decode_html_end_li   => \&end_html_list_item   );
     
-    $frame->add_trigger( start_text_document  => \&reset_count       );
-    $frame->add_trigger( block_as_text_number => \&as_text           );
-    $frame->add_trigger( block_as_text_block  => \&check_is_list     );
-    $frame->add_trigger( format_block_text    => \&test_text_block   );
+    $frame->add_trigger( start_text_document  => \&reset_count          );
+    $frame->add_trigger( block_as_text_number => \&as_text              );
+    $frame->add_trigger( block_as_text_block  => \&check_is_list        );
+    $frame->add_trigger( format_block_text    => \&test_text_block      );
     
-    $frame->add_trigger( start_html_document  => \&reset_count       );
-    $frame->add_trigger( block_as_html_indent => \&choose_list       );
-    $frame->add_trigger( block_as_html_number => \&as_html           );
-    $frame->add_trigger( block_as_html_block  => \&check_is_list     );
-    $frame->add_trigger( format_block_html    => \&test_html_block   );
+    $frame->add_trigger( start_html_document  => \&reset_count          );
+    $frame->add_trigger( block_as_html_indent => \&choose_list          );
+    $frame->add_trigger( block_as_html_number => \&as_html              );
+    $frame->add_trigger( block_as_html_block  => \&check_is_list        );
+    $frame->add_trigger( format_block_html    => \&test_html_block      );
 }
 
 
@@ -63,7 +67,7 @@ sub detect_text_block {
         # preserve the individual characters for the indent regexp
            $first_line_indent =~ s{ (.) }{\[$1\]}gx;
         my $empty_indent       = '[ ]' x 4;
-
+        
         # list items cannot be headers
         $metadata->{'no_header'} = 1;
         
@@ -88,6 +92,78 @@ sub detect_text_block {
     }
     
     return;
+}
+
+
+sub start_html_list {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+    my @attr    = @_;
+    
+    $self->add_new_html_block( $details );
+    
+    foreach my $attribute ( @attr ) {
+        foreach my $key ( keys %{ $attribute } ) {
+            if ( 'start' eq $key ) {
+                $details->{'list_start'} = $attribute->{ $key };
+            }
+        }
+    }
+    
+    push @{ $details->{'list_type'} }, 'number';
+    $details->{'in_list'}++;
+}
+sub end_html_list {
+    my $self    = shift;
+    my $details = shift;
+
+    $details->{'in_list'}--;
+    pop @{ $details->{'list_type'} };
+}
+sub start_html_list_item {
+    my $self    = shift;
+    my $details = shift;
+    
+    my $types = $details->{'list_type'};
+    my $type  = $types->[ $#$types ];
+    
+    if ( 'number' eq $type ) {
+        $self->add_new_html_block( $details );
+        
+        my $number = q(#);
+        if ( defined $details->{'list_start'} ) {
+            $number = $details->{'list_start'};
+            delete $details->{'list_start'};
+        }
+        
+        my %block = (
+                context => [
+                    'number',
+                    'block',
+                ],
+                metadata => {
+                    list_number => $number,
+                },
+                elements => [],
+            );
+        
+        my $indent = $details->{'in_list'};
+        while ( $indent > 0 ) {
+            unshift @{ $block{'context'} }, 'indent';
+            $indent--;
+        }
+
+        $details->{'current_block'} = \%block;
+        $self->add_insert_point( $details->{'current_block'}{'elements'} );
+    }
+}
+sub end_html_list_item {
+    my $self    = shift;
+    my $details = shift;
+    
+    $self->add_new_html_block( $details );
 }
 
 

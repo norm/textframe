@@ -11,9 +11,8 @@ use HTML::Parser;
 use IO::All -utf8;
 use Module::Pluggable   require     => 1,
                         search_path => "Text::Frame";
-use Storable            qw( dclone );
 use Readonly;
-
+use Storable            qw( dclone );
 
 Readonly my $CLASS_PREFIX => 'Text::Frame::';
     
@@ -25,11 +24,11 @@ sub new {
     
     my $class = ref $proto || $proto;
     my $self  = {
-                    string   => '',
-                    links    => {},
-                    metadata => {},
-                    insert   => [],
-                };
+            string   => '',
+            links    => {},
+            metadata => {},
+            insert   => [],
+        };
     bless $self, $class;
     
     # read in file argument to replace current string
@@ -57,6 +56,10 @@ sub new {
         $self->decode_string( $string );
     }
     
+    if ( defined $args{'blocks'} ) {
+        $self->set_blocks( @{ $args{'blocks'} } );
+    }
+    
     return $self;
 }
 
@@ -79,8 +82,10 @@ sub decode_html_string {
     my $string = shift;
     
     my %details = (
-            blocks         => [],
+            blocks => [],
         );
+    
+    $details{'block_insert'} = $details{'blocks'};
     
     my $html = HTML::Parser->new( 
             api_version => 3,
@@ -145,13 +150,43 @@ sub decode_html_string {
         );
     
     $html->parse( $string );
+    $self->set_blocks( @{ $details{'blocks'} } );
 }
-sub add_new_block {
-    my $self = shift;
-    my $block = shift;
+sub add_new_html_block {
+    my $self    = shift;
+    my $details = shift;
     
-    $self->reset_insert_point();
-    $self->add_block( $block );
+    if ( defined $details->{'current_block'} ) {
+        my $insert = $self->get_block_insert_point();
+        
+        if ( defined $insert ) {
+            push @{ $insert }, $details->{'current_block'};
+        }
+        else {
+            push @{ $details->{'blocks'} }, $details->{'current_block'};
+        }
+        
+        delete $details->{'current_block'};
+        $self->{'insert'} = [];
+    }
+}
+sub add_block_insert_point {
+    my $self  = shift;
+    my $point = shift;
+    
+    push @{ $self->{'block_insert'} }, $point;
+}
+sub get_block_insert_point {
+    my $self = shift;
+    
+    my $inserts = $self->{'block_insert'};
+    
+    return $inserts->[$#$inserts];
+}
+sub remove_block_insert_point {
+    my $self = shift;
+    
+    pop @{ $self->{'block_insert'} };
 }
 sub add_insert_point {
     my $self  = shift;
@@ -170,11 +205,6 @@ sub get_insert_point {
     my $inserts = $self->{'insert'};
     
     return $inserts->[$#$inserts];
-}
-sub reset_insert_point {
-    my $self    = shift;
-    
-    $self->{'insert'} = [];
 }
 
 
@@ -299,7 +329,7 @@ sub decode_inline_text {
         
         push @elements,  $self->decode_inline_text( $end );
     }
-    else {
+    elsif ( defined $data ) {
         push @elements,  $data;
     }
     
@@ -621,7 +651,6 @@ sub sorted_plugins {
     
     return $self->sorted_dependencies( \%sorted_plugins );
 }
-
 sub sorted_dependencies {
     my $self   = shift;
     my $values = shift;
@@ -635,8 +664,6 @@ sub sorted_dependencies {
             return $depths{ $b } <=> $depths{ $a };
         } keys %depths;
 }
-
-
 sub dependency_depth {
     my $self   = shift;
     my $item   = shift;
@@ -763,11 +790,6 @@ sub reset_blocks {
     my $self = shift;
     delete $self->{'blocks'};
 }
-sub add_block {
-    my $self  = shift;
-    my $block = shift;
-    
-    push @{ $self->{'blocks'} }, $block;
-}
+
 
 1;

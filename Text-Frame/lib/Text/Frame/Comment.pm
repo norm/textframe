@@ -30,7 +30,7 @@ sub detect_ignored_comment {
     my $context  = shift;
     
     # ignored comments can only exist as the first context
-    return unless -1 == $#{ $context };
+    return  unless -1 == $#{ $context };
     
     my $ignored_comment_regexp = qr{
             ^
@@ -58,10 +58,6 @@ sub detect_ignored_comment {
 sub detect_included_comment {
     my $self     = shift;
     my $block    = shift;
-    my $previous = shift;
-    my $gap_hint = shift;
-    my $metadata = shift;
-    my $context  = shift;
     
     return if $block =~ m{^\s*$}s;
     
@@ -86,6 +82,8 @@ sub add_html_comment {
     my $html    = shift;
     my $string  = shift;
     
+    $self->add_new_html_block( $details );
+
     $string =~ s{
         ^
             [<][!][-][-]
@@ -98,10 +96,6 @@ sub add_html_comment {
         $
     }{$1}sx;
     
-    if ( defined $details->{'current_block'} ) {
-        $self->add_new_block( $details->{'current_block'} );
-    }
-
     my %block = (
             context => [
                 'indent',
@@ -116,7 +110,9 @@ sub add_html_comment {
                     },
                 ],
         );
-    $self->add_new_block( \%block );
+    
+    $details->{'current_block'} = \%block;
+    $self->add_new_html_block( $details );
 }
 
 

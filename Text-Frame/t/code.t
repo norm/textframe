@@ -231,12 +231,7 @@ HTML
                 'block',
             ],
             metadata => {},
-            elements => [
-                {
-                    type => 'string',
-                    text => '',
-                },
-            ],
+            elements => [],
         },
         {
             context => [

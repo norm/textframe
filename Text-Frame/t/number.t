@@ -3,16 +3,18 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 28;
+use Test::More      tests => 56;
 require 't/testing.pl';
 
 use Text::Frame;
 
+use Storable        qw( dclone );
 
 
 my $document;
 my $html;
 my @data;
+my @html_data;
 my %links;
 my $ref_doc;
 
@@ -74,7 +76,18 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0 .. 1 ) {
+    delete $html_data[ $i ]{'metadata'}{'no_header'};
+}
+test_textframe( {
+        input      => $document,
+        text       => $ref_doc,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test a simple list that starts at a value other than 1
@@ -133,7 +146,18 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0 .. 1 ) {
+    delete $html_data[ $i ]{'metadata'}{'no_header'};
+}
+test_textframe( {
+        input      => $document,
+        text       => $ref_doc,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # check that automatic numbering is actually enforced
@@ -216,7 +240,19 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links, $ref_doc );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0 .. 2 ) {
+    delete $html_data[ $i ]{'metadata'}{'no_header'};
+    $html_data[ $i ]{'metadata'}{'list_number'} = q(#);
+}
+test_textframe( {
+        input      => $document,
+        text       => $ref_doc,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that a paragraph between list items breaks it up
@@ -288,7 +324,18 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0, 2 ) {
+    delete $html_data[ $i ]{'metadata'}{'no_header'};
+}
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that sub lists work
@@ -386,7 +433,19 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0 .. 3 ) {
+    delete $html_data[ $i ]{'metadata'}{'no_header'};
+    $html_data[ $i ]{'metadata'}{'list_number'} = q(#);
+}
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that prematurely closing lists work
@@ -489,7 +548,19 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0 .. 3 ) {
+    delete $html_data[ $i ]{'metadata'}{'no_header'};
+    $html_data[ $i ]{'metadata'}{'list_number'} = q(#);
+}
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that sub sub lists work
@@ -702,7 +773,19 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0 .. 8 ) {
+    delete $html_data[ $i ]{'metadata'}{'no_header'};
+    $html_data[ $i ]{'metadata'}{'list_number'} = q(#);
+}
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test opening too many lists by using bad indents

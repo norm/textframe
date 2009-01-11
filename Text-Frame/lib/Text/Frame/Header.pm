@@ -59,8 +59,44 @@ sub detect_text_block {
     return( 
               'header',
               $block,
-          ) if ( $is_header );
+          ) if $is_header;
     return;
+}
+
+
+sub start_html_header {
+    my $self    = shift;
+    my $details = shift;
+    my $html    = shift;
+    my $tag     = shift;
+
+    $self->add_new_html_block( $details );
+
+    my %block = (
+            context => [
+                'header',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        );
+
+    $tag =~ m{ h(\d) }x;
+    my $indent = $1 - 1;
+
+    while ( $indent > 0 ) {
+        unshift @{ $block{'context'} }, 'indent';
+        $indent--;
+    }
+
+    $details->{'current_block'} = \%block;
+    $self->add_insert_point( $details->{'current_block'}{'elements'} );
+}
+sub end_html_header {
+    my $self    = shift;
+    my $details = shift;
+    
+    $self->add_new_html_block( $details );
 }
 
 
@@ -92,49 +128,6 @@ sub as_html {
     $details->{'no_paragraph'} = 1;
     push @{ $details->{'start_tags'} }, "<h${level}>";
     push @{ $details->{'end_tags'}   }, "</h${level}>";
-}
-
-
-sub start_html_header {
-    my $self    = shift;
-    my $details = shift;
-    my $html    = shift;
-    my $tag     = shift;
-
-    if ( defined $details->{'current_block'} ) {
-        $self->add_new_block( $details->{'current_block'} );
-    }
-
-    my %block = (
-            context => [
-                'header',
-                'block',
-            ],
-            metadata => {},
-            elements => [],
-        );
-
-    $tag =~ m{ h(\d) }x;
-    my $indent = $1 - 1;
-
-    while ( $indent > 0 ) {
-        unshift @{ $block{'context'} }, 'indent';
-        $indent--;
-    }
-
-    $details->{'current_block'} = \%block;
-    $self->add_insert_point( $details->{'current_block'}{'elements'} );
-}
-sub end_html_header {
-    my $self = shift;
-    my $details = shift;
-    my $html = shift;
-    my $tag  = shift;
-    
-    if ( defined $details->{'current_block'} ) {
-        $self->add_new_block( $details->{'current_block'} );
-        delete $details->{'current_block'};
-    }
 }
 
 

@@ -60,7 +60,7 @@ sub detect_text_string {
                 && ( $end_character   !~ m{ [ [:punct:] ] }x )
             );
         
-        return unless $markers_by_text;
+        return  unless $markers_by_text;
         return(
                 $before,
                 {
@@ -81,7 +81,7 @@ sub start_html_strike {
 
     my $insert  = $self->get_insert_point();
     my %element = (
-            type => 'struck',
+            type     => 'struck',
             contents => [],
         );
 
@@ -89,7 +89,7 @@ sub start_html_strike {
     $self->add_insert_point( $element{'contents'} );
 }
 sub end_html_strike {
-    my $self    = shift;
+    my $self = shift;
 
     $self->remove_insert_point();
 }

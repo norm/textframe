@@ -47,17 +47,27 @@ sub detect_text_string {
     my $self   = shift;
     my $string = shift;
     
-    # if nothing else, a string is always a string
-    return(
-              undef,
-              {
-                  type => 'string',
-                  text => $string,
-                  
-              },
-              undef,
-          );
+    if ( $string ) {
+        # if nothing else, a string is always a string
+        return(
+                undef,
+                {
+                    type => 'string',
+                    text => $string,
+                },
+                undef,
+            );
+    }
+    else {
+        return(
+                undef,
+                undef,
+                undef,
+            );
+    }
 }
+
+
 sub add_html_string {
     my $self    = shift;
     my $details = shift;
@@ -67,14 +77,28 @@ sub add_html_string {
     my $insert = $self->get_insert_point();
     
     if ( defined $insert ) {
-        $self->call_trigger( 
-                'html_string_unescape', 
-                \$string 
-            );
-        push @{ $insert }, {
-                type => 'string',
-                text => $string,
-            };
+        my $last = $insert->[ $#$insert ];
+
+        # this block protects the data structure from being influenced
+        # by extraneous white space in list items
+        my $add_string = 1;
+        if ( defined $last ) {
+            my $type = $last->{'type'};
+            
+            $add_string = 0 if 'string' eq $type
+                            && $string =~ m{^\s*$};
+        }
+        
+        if ( $add_string ) {
+            $self->call_trigger( 
+                    'html_string_unescape', 
+                    \$string 
+                );
+            push @{ $insert }, {
+                    type => 'string',
+                    text => $string,
+                };
+        }
     }
 }
 

@@ -3,16 +3,18 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 24;
+use Test::More      tests => 48;
 require 't/testing.pl';
 
 use Text::Frame;
 
+use Storable    qw( dclone );
 
 
 my $document;
 my $html;
 my @data;
+my @html_data;
 my %links;
 my $ref_doc;
 
@@ -66,7 +68,17 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+$html_data[0]{'metadata'} = {};
+$html_data[1]{'metadata'} = {};
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that very simple lists don't become headers
@@ -117,7 +129,17 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+$html_data[0]{'metadata'} = {};
+$html_data[1]{'metadata'} = {};
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that a paragraph between list items breaks it up
@@ -187,7 +209,18 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+$html_data[0]{'metadata'} = {};
+$html_data[1]{'metadata'} = {};
+$html_data[2]{'metadata'} = {};
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that sub lists work
@@ -261,7 +294,18 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+$html_data[0]{'metadata'} = {};
+$html_data[1]{'metadata'} = {};
+$html_data[2]{'metadata'} = {};
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test that sub sub lists work
@@ -360,7 +404,19 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+$html_data[0]{'metadata'} = {};
+$html_data[1]{'metadata'} = {};
+$html_data[2]{'metadata'} = {};
+$html_data[3]{'metadata'} = {};
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # fairly complex nested lists
@@ -589,7 +645,18 @@ HTML
         },
     );
 %links = ();
-test_textframe( $document, $html, \@data, \%links );
+@html_data = @{ dclone( \@data ) };
+for my $i ( 0 .. 9 ) {
+    $html_data[ $i ]{'metadata'} = {};
+}
+test_textframe( {
+        input      => $document,
+        text       => $document,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
 
 
 # test opening too many lists by using bad indents

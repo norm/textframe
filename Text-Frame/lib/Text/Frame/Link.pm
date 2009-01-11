@@ -12,8 +12,8 @@ sub initialise {
     my $frame = shift;
     
     $frame->add_trigger( detect_text_string   => \&detect_text_string );
-    $frame->add_trigger( decode_html_start_a => \&start_html_link     );
-    $frame->add_trigger( decode_html_end_a   => \&end_html_link       );
+    $frame->add_trigger( decode_html_start_a  => \&start_html_link    );
+    $frame->add_trigger( decode_html_end_a    => \&end_html_link      );
     
     $frame->add_trigger( as_text_link         => \&as_text            );
     $frame->add_trigger( format_document_text => \&reference_links    );
@@ -65,6 +65,9 @@ sub detect_text_string {
             $text = $uri;
             $uri  = '';
         }
+        
+        $text = $uri  if !defined $text
+                      || q() eq $text;
         
         # white space within URIs is allowed in textframe source, but ignored
         $uri =~ s{\s}{}gs;
@@ -149,22 +152,27 @@ sub as_text {
     my $uri  = $item->{'uri'};
     
     if ( !$uri ) {
-        $uri = $self->get_link( $text );
+        $uri = $self->get_link( $text ) || q();
     }
     
-    # extract the URI for reference links, unless it already has been and
-    # the URIs do not match (this would destroy a link)
-    my $ref_uri = $self->get_metadata( 'reference_links', $text );
-    if ( defined $ref_uri ) {
-        $uri = q()  if $ref_uri eq $uri;
-    }
-    else {
-        $self->set_metadata( 'reference_links', $text, $uri );
-        $uri = q();
-    }
+    if ( $text ne $uri ) {
+        # extract the URI for reference links, unless it already has been and
+        # the URIs do not match (this would destroy a link)
+        my $ref_uri = $self->get_metadata( 'reference_links', $text );
+        if ( defined $ref_uri ) {
+            $uri = q()  if $ref_uri eq $uri;
+        }
+        else {
+            $self->set_metadata( 'reference_links', $text, $uri );
+            $uri = q();
+        }
 
-    if ( $uri ) {
-        $$block .= "<$text | $uri>";        
+        if ( $uri ) {
+            $$block .= "<$text | $uri>";        
+        }
+        else {
+            $$block .= "<$text>";
+        }
     }
     else {
         $$block .= "<$text>";
@@ -179,13 +187,15 @@ sub reference_links {
     if ( defined $links ) {
         foreach my $text ( keys %{ $links } ) {
             my $uri = $links->{ $text } || q();
-
-            my $link_text = "<$text | $uri>\n";
-            if ( length $link_text > 78 ) {
-                # TODO - better formatting please
-                $link_text = "<$text |\n$uri\n>\n";
+            
+            if ( q() ne $uri  &&  $text ne $uri ) {
+                my $link_text = "<$text | $uri>\n";
+                if ( length $link_text > 78 ) {
+                    # TODO - better formatting please
+                    $link_text = "<$text |\n$uri\n>\n";
+                }
+                $$output .= $link_text;
             }
-            $$output .= $link_text;
         }
     }
 }
@@ -207,8 +217,6 @@ sub as_html {
     
     $$block .= "<a href='${uri}'>${text}</a>";
 }
-
-
 
 
 1;

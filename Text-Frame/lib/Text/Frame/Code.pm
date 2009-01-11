@@ -184,9 +184,7 @@ sub start_html_code {
     my @attr    = @_;
     
     if ( defined $details->{'in_pre'} ) {
-        if ( defined $details->{'current_block'} ) {
-            $self->add_new_block( $details->{'current_block'} );
-        }
+        $self->add_new_html_block( $details );
         
         my $language;
         foreach my $attribute ( @attr ) {
@@ -244,8 +242,6 @@ sub end_html_code {
 sub start_html_pre {
     my $self    = shift;
     my $details = shift;
-    my $html    = shift;
-    my $tag     = shift;
 
     $details->{'in_pre'} = 1;
 }
@@ -267,12 +263,9 @@ sub end_html_pre {
     }
     
     $self->remove_insert_point();
-
-    if ( defined $details->{'current_block'} ) {
-        $self->add_new_block( $details->{'current_block'} );
-        delete $details->{'current_block'};
-    }
+    $self->add_new_html_block( $details );
 }
+
 
 sub as_text {
     my $self    = shift;
@@ -291,9 +284,9 @@ sub block_as_text {
     my $self    = shift;
     my $details = shift;
     
-    my $count     = $self->get_metadata( $CATEGORY, 'current_block'     );
-    my $code      = $self->get_metadata( $CATEGORY, "code_${count}"     );
-    my $language  = $self->get_metadata( $CATEGORY, "language_${count}" );
+    my $count    = $self->get_metadata( $CATEGORY, 'current_block'     );
+    my $code     = $self->get_metadata( $CATEGORY, "code_${count}"     );
+    my $language = $self->get_metadata( $CATEGORY, "language_${count}" );
     
     my $indent = q( ) x 4;
     my $lang   = defined $language

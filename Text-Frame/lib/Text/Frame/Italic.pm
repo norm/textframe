@@ -58,7 +58,7 @@ sub detect_text_string {
                 && ( $end_character   !~ m{ [ [:punct:] ] }x )
             );
         
-        return unless $markers_by_text;
+        return  unless $markers_by_text;
         return(
                 $before,
                 {
