@@ -69,9 +69,11 @@ sub decode_string {
     my $string = shift;
     
     if ( $string =~ m{^ \s* [<] [\w!]+ }sx ) {
+        $self->set_input_type( 'html' );
         $self->decode_html_string( $string );
     }
     else {
+        $self->set_input_type( 'text' );
         $self->decode_text_string( $string );
     }
 }
@@ -790,6 +792,16 @@ sub reset_blocks {
     my $self = shift;
     delete $self->{'blocks'};
 }
-
+sub set_input_type {
+    my $self = shift;
+    my $type = shift;
+    
+    $self->{'input_type'} = $type;
+}
+sub get_input_type {
+    my $self = shift;
+    
+    return $self->{'input_type'};
+}
 
 1;
