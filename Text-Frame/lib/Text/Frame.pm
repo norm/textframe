@@ -7,6 +7,7 @@ use utf8;
 use version;            our $VERSION = qv( '0.5.5' );
 
 use Class::Trigger;
+use Encode;
 use HTML::Parser;
 use IO::All -utf8;
 use Module::Pluggable   require     => 1,
@@ -37,6 +38,10 @@ sub new {
         my $io = io $file;
         $self->set_string( $io->all );
         delete $args{'file'};
+    }
+    
+    if ( defined $args{'string'} ) {
+        $self->set_string( $args{'string'} );
     }
     
     foreach my $arg ( keys %args ) {
@@ -402,8 +407,18 @@ sub get_links {
 }
 
 
+sub file_as_html {
+    my $self = shift;
+    my $file = shift;
+    
+    if ( defined $file ) {
+        my $io = io $file;
+
+        $io->print( $self->as_html() );
+    }
+}
 sub as_html {
-    my $self   = shift;
+    my $self = shift;
     
     my @blocks = $self->get_blocks();
     my $output;
@@ -500,6 +515,16 @@ sub block_as_html {
 }
 
 
+sub file_as_text {
+    my $self = shift;
+    my $file = shift;
+    
+    if ( defined $file ) {
+        my $io = io $file;
+
+        $io->print( $self->as_text() );
+    }
+}
 sub as_text {
     my $self     = shift;
     my %metadata = @_;
@@ -741,7 +766,7 @@ sub set_string {
     my $self   = shift;
     my $string = shift;
     
-    $self->{'string'} = $string;
+    $self->{'string'} = decode_utf8( $string );
 }
 sub get_metadata {
     my $self     = shift;

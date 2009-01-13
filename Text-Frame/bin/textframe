@@ -6,12 +6,18 @@ use warnings;
 use FileHandle;
 use File::Basename;
 use Getopt::Std;
+use IO::All -utf8;
 use Pod::Usage;
 use Readonly;
 use Text::Frame;
 
 Readonly my @TEXT_SUFFIXES => qw( .frame .txt .txf .textframe );
 Readonly my @HTML_SUFFIXES => qw( .html .htm );
+
+BEGIN {
+    binmode $_, ":utf8" 
+        for ( \*STDOUT, \*STDIN, \*STDERR );
+}
 
 
 
@@ -46,25 +52,18 @@ sub convert_files {
     my @files = @_;
     
     foreach my $file ( @files ) {
-        print "-- $file\n";
         my( $basename, undef, $extension ) 
             = basename( $file, @TEXT_SUFFIXES, @HTML_SUFFIXES );
         
         my $frame       = Text::Frame->new( file => $file )
                        or die "$file: $!";
         my $output_file = output_filename( $basename );
-        my $handle      = FileHandle->new( $output_file, q(w) );
         
-        if ( defined $handle ) {
-            if ( defined $option{'t'} ) {
-                print {$handle} $frame->as_text();
-            }
-            else {
-                print {$handle} $frame->as_html();
-            }
+        if ( defined $option{'t'} ) {
+            $frame->file_as_text( $output_file );
         }
         else {
-            print STDERR "Error writing to $output_file: $!";
+            $frame->file_as_html( $output_file );
         }
     }
 }
