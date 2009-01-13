@@ -1,0 +1,95 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use FileHandle;
+use File::Basename;
+use Getopt::Std;
+use Pod::Usage;
+use Readonly;
+use Text::Frame;
+
+Readonly my @TEXT_SUFFIXES => qw( .frame .txt .txf .textframe );
+Readonly my @HTML_SUFFIXES => qw( .html .htm );
+
+
+
+my %option;
+
+getopts( 'chtv', \%option )
+    or pod2usage();
+
+# -h means usage summary
+pod2usage()             if defined $option{'h'};
+
+# -c means to convert files in place rather than use stdin/stdout
+if ( defined $option{'c'} ) {
+    convert_files( @ARGV )  if defined $option{'c'};
+}
+# otherwise loop over any arguments, or convert stdin
+else {
+    local $/;   # read in files in their entirety
+    my $frame = Text::Frame->new( string => <> );
+    
+    if ( $option{'t'} ) {
+        print $frame->as_text();
+    }
+    else {
+        print $frame->as_html();
+    }
+}
+exit;
+
+
+sub convert_files {
+    my @files = @_;
+    
+    foreach my $file ( @files ) {
+        print "-- $file\n";
+        my( $basename, undef, $extension ) 
+            = basename( $file, @TEXT_SUFFIXES, @HTML_SUFFIXES );
+        
+        my $frame       = Text::Frame->new( file => $file )
+                       or die "$file: $!";
+        my $output_file = output_filename( $basename );
+        my $handle      = FileHandle->new( $output_file, q(w) );
+        
+        if ( defined $handle ) {
+            if ( defined $option{'t'} ) {
+                print {$handle} $frame->as_text();
+            }
+            else {
+                print {$handle} $frame->as_html();
+            }
+        }
+        else {
+            print STDERR "Error writing to $output_file: $!";
+        }
+    }
+}
+
+
+sub output_filename {
+    my $basename = shift;
+    
+    my $count     = 0;
+    my $extension = defined $option{'t'}
+                        ? $TEXT_SUFFIXES[0]
+                        : $HTML_SUFFIXES[0];
+    my $filename  = "${basename}${extension}";
+    while ( -f $filename ) {
+        $count++;
+        $filename = "${basename}.${count}${extension}";
+    }
+    
+    return $filename;
+}
+
+
+__END__
+
+=head1 NAME
+
+B<textframe> - convert textframe documents to HTML, and vice versa
+
