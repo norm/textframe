@@ -200,13 +200,8 @@ sub append_inline_element {
     my %block = @_;
     
     my $insert  = $self->get_insert_point();
-    my %element = (
-            type     => 'struck',
-            contents => [],
-        );
-
-    push @{ $insert }, \%element;
-    $self->add_insert_point( $element{'contents'} );
+    push @{ $insert }, \%block;
+    $self->add_insert_point( $block{'contents'} );
     
 }
 sub add_insert_point {
