@@ -113,15 +113,11 @@ sub start_html_link {
     }
     
     if ( defined $uri ) {
-        my $insert  = $self->get_insert_point();
-        my %element = (
-                type => 'link',
+        $self->append_inline_element(
+                type     => 'link',
                 contents => [],
-                uri => $uri,
+                uri      => $uri,
             );
-
-        push @{ $insert }, \%element;
-        $self->add_insert_point( $element{'contents'} );
     }
 }
 sub end_html_link {

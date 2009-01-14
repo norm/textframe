@@ -195,6 +195,20 @@ sub remove_block_insert_point {
     
     pop @{ $self->{'block_insert'} };
 }
+sub append_inline_element {
+    my $self  = shift;
+    my %block = @_;
+    
+    my $insert  = $self->get_insert_point();
+    my %element = (
+            type     => 'struck',
+            contents => [],
+        );
+
+    push @{ $insert }, \%element;
+    $self->add_insert_point( $element{'contents'} );
+    
+}
 sub add_insert_point {
     my $self  = shift;
     my $point = shift;

@@ -74,17 +74,12 @@ sub detect_text_string {
 
 
 sub start_html_italic {
-    my $self    = shift;
-    my $details = shift;
+    my $self = shift;
 
-    my $insert  = $self->get_insert_point();
-    my %element = (
-            type => 'italic',
+    $self->append_inline_element(
+            type     => 'italic',
             contents => [],
         );
-
-    push @{ $insert }, \%element;
-    $self->add_insert_point( $element{'contents'} );
 }
 sub end_html_italic  {
     my $self    = shift;

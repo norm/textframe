@@ -76,17 +76,12 @@ sub detect_text_string {
 
 
 sub start_html_strike {
-    my $self    = shift;
-    my $details = shift;
-
-    my $insert  = $self->get_insert_point();
-    my %element = (
+    my $self = shift;
+    
+    $self->append_inline_element(
             type     => 'struck',
             contents => [],
         );
-
-    push @{ $insert }, \%element;
-    $self->add_insert_point( $element{'contents'} );
 }
 sub end_html_strike {
     my $self = shift;

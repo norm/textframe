@@ -212,14 +212,10 @@ sub start_html_code {
         $self->add_insert_point( $details->{'current_block'}{'elements'} );
     }
     else {
-        my $insert  = $self->get_insert_point();
-        my %element = (
-                type => 'code',
+        $self->append_inline_element(
+                type     => 'code',
                 contents => [],
             );
-
-        push @{ $insert }, \%element;
-        $self->add_insert_point( $element{'contents'} );
     }
 
 }
