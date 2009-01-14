@@ -1,22 +1,3 @@
-    
-    *   Link.pm gets the text from the sub-elements after it closes,
-        flattens the text down and removes the content element. 
-        
-    *   REWRITE ALL SECTIONS THAT ARE:
-    
-            my $insert  = $self->get_insert_point();
-            my %element = (
-                    type => 'link',
-                    contents => [],
-                    uri => $uri,
-                );
-
-            push @{ $insert }, \%element;
-            $self->add_insert_point( $element{'contents'} );
-    
-        OR SIMILAR TO USE A ROUTINE IN Frame.pm FOR ROBUSTNESS.
-        
-        --------------------------------------------------------------
 
     *   Finish writing the tests.
 
@@ -50,8 +31,6 @@
         *   tables
     
     *   Refactor the HTML list output routines to be more comprehensible.
-    
-    *   Command-line script to convert textframe document to HTML (pipeable).
     
     *   Indented text after a list item is a continuation of the previous
         list item.
