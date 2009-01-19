@@ -5,6 +5,8 @@ use warnings;
 
 use utf8;
 
+our @plugin_before = qw( Italic );
+
 
 
 sub initialise {
@@ -39,8 +41,13 @@ sub detect_text_string {
                 \s*
             )?
             (                           # capture the URI (also cannot start
-                [^\s\W>|][^|>]+?        #   with a space or contain 
-            )                           #   | or > chars)
+                (?:                     #   with a space or contain | or >
+                    [^\s\W>|]           
+                    |                   #   (/ is valid start for relative
+                    [/]                 #   URLs, but is not matched above)
+                )
+                [^|>]+?                 #   (the rest of the URI)
+            )
             \s*
             [>]
             

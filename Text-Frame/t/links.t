@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 32;
+use Test::More      tests => 40;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -93,6 +93,49 @@ HTML
     );
 %links = (
         'Google' => 'http://www.google.com/',
+    );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
+
+
+# check relative links work
+$document = <<END;
+        A basic link to <another page | /some/other/page/>.
+
+END
+$ref_doc = <<END;
+        A basic link to <another page>.
+
+<another page | /some/other/page/>
+END
+$html = <<HTML;
+<p>A basic link to <a href='/some/other/page/'>another page</a>.</p>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'A basic link to ',
+                },
+                {
+                    type => 'link',
+                    text => 'another page',
+                },
+                {
+                    type => 'string',
+                    text => '.',
+                },
+            ],
+        },
+    );
+%links = (
+        'another page' => '/some/other/page/',
     );
 test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
