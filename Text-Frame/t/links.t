@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 40;
+use Test::More      tests => 48;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -138,6 +138,45 @@ HTML
         'another page' => '/some/other/page/',
     );
 test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
+
+
+# check relative links work
+$document = <<END;
+        A basic link to <another page>.
+
+<another page | /another-page>
+END
+$html = <<HTML;
+<p>A basic link to <a href='/another-page'>another page</a>.</p>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'A basic link to ',
+                },
+                {
+                    type => 'link',
+                    text => 'another page',
+                },
+                {
+                    type => 'string',
+                    text => '.',
+                },
+            ],
+        },
+    );
+%links = (
+        'another page' => '/another-page',
+    );
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 # test links that span lines are correctly parsed
