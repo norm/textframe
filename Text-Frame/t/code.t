@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 64;
+use Test::More      tests => 72;
 require 't/testing.pl';
 
 use Storable        qw( dclone );
@@ -230,7 +230,9 @@ HTML
                 'code',
                 'block',
             ],
-            metadata => {},
+            metadata => {
+                code_found => 1,
+            },
             elements => [],
         },
         {
@@ -251,4 +253,92 @@ HTML
 %links = ();
 @html_data = @{ dclone( \@data ) };
 delete $html_data[1]{'elements'}[0];
+delete $html_data[1]{'metadata'}{'code_found'};
+test_textframe( $document, $html, \@data, \@html_data, \%links );
+
+
+# test a long code block
+$document = <<END;
+        First paragraph.
+
+    « perl:
+        # copy arguments over
+        foreach my \$key ( keys \%metadata ) {
+            \$details{ \$key } = \$metadata{ \$key };
+        }
+        
+        # preserve original values
+        KEY:
+        foreach my \$key ( keys \%details ) {
+            next KEY  if 'metadata' eq \$key;
+        
+            \$details{"original_\${key}"} = \$details{ \$key };
+        }
+    »
+
+        Second paragraph.
+
+END
+$html = <<HTML;
+<p>First paragraph.</p>
+<pre><code class='perl'># copy arguments over
+foreach my \$key ( keys \%metadata ) {
+    \$details{ \$key } = \$metadata{ \$key };
+}
+
+# preserve original values
+KEY:
+foreach my \$key ( keys \%details ) {
+    next KEY  if 'metadata' eq \$key;
+
+    \$details{"original_\${key}"} = \$details{ \$key };
+}
+</code></pre>
+<p>Second paragraph.</p>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'First paragraph.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'code',
+                'block',
+            ],
+            metadata => {
+                code_found => 1,
+            },
+            elements => [],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'Second paragraph.',
+                },
+            ],
+        },
+    );
+%links = ();
+@html_data = @{ dclone( \@data ) };
+delete $html_data[1]{'elements'}[0];
+delete $html_data[1]{'metadata'}{'code_found'};
 test_textframe( $document, $html, \@data, \@html_data, \%links );

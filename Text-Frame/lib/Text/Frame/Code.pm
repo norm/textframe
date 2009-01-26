@@ -17,20 +17,23 @@ sub initialise {
     my $self  = shift;
     my $frame = shift;
     
-    $frame->add_trigger( detect_text_block      => \&detect_block_code  );
-    $frame->add_trigger( detect_text_string     => \&detect_inline_code );
-    $frame->add_trigger( decode_html_start_code => \&start_html_code    );
-    $frame->add_trigger( decode_html_end_code   => \&end_html_code      );
-    $frame->add_trigger( decode_html_start_pre  => \&start_html_pre     );
-    $frame->add_trigger( decode_html_end_pre    => \&end_html_pre       );
+    $frame->add_trigger( detect_text_block      => \&detect_single_block );
+    $frame->add_trigger( detect_text_block      => \&detect_block_end    );
+    $frame->add_trigger( detect_text_block      => \&detect_block_cont   );
+    $frame->add_trigger( detect_text_block      => \&detect_block_start  );
+    $frame->add_trigger( detect_text_string     => \&detect_inline_code  );
+    $frame->add_trigger( decode_html_start_code => \&start_html_code     );
+    $frame->add_trigger( decode_html_end_code   => \&end_html_code       );
+    $frame->add_trigger( decode_html_start_pre  => \&start_html_pre      );
+    $frame->add_trigger( decode_html_end_pre    => \&end_html_pre        );
     
-    $frame->add_trigger( start_text_document => \&reset_count           );
-    $frame->add_trigger( block_as_text_code  => \&block_as_text         );
-    $frame->add_trigger( as_text_code        => \&as_text               );
+    $frame->add_trigger( start_text_document    => \&reset_count         );
+    $frame->add_trigger( block_as_text_code     => \&block_as_text       );
+    $frame->add_trigger( as_text_code           => \&as_text             );
     
-    $frame->add_trigger( start_html_document => \&reset_count           );
-    $frame->add_trigger( block_as_html_code  => \&block_as_html         );
-    $frame->add_trigger( as_html_code        => \&as_html               );
+    $frame->add_trigger( start_html_document    => \&reset_count         );
+    $frame->add_trigger( block_as_html_code     => \&block_as_html       );
+    $frame->add_trigger( as_html_code           => \&as_html             );
 }
 
 
@@ -123,14 +126,14 @@ sub detect_inline_code {
     
     return;
 }
-sub detect_block_code {
+sub detect_single_block {
     my $self     = shift;
     my $block    = shift;
     my $previous = shift;
     my $gap_hint = shift;
     my $metadata = shift;
     
-    my $code_block_regexp = qr{
+    my $single_code_block_regexp = qr{
             ^
             (?:
                 [«]
@@ -152,11 +155,15 @@ sub detect_block_code {
                 |
                 [>][>]
             )
+            \s*
+            $
         }sx;
     
-    if ( $block =~ $code_block_regexp ) {
+    if ( $block =~ $single_code_block_regexp ) {
         my $language = $1;
         my $code     = $2;
+        
+        $metadata->{'code_found'} = 1;
         
         # remove the indent
         $code =~ s{^ [ ]{4} }{}gmx;
@@ -172,6 +179,139 @@ sub detect_block_code {
                 q(),
             );
     }
+    
+    return;
+}
+sub detect_block_start {
+    my $self     = shift;
+    my $block    = shift;
+    my $previous = shift;
+    my $gap_hint = shift;
+    my $metadata = shift;
+    
+    return  if defined $metadata->{'code_found'};
+    
+    my $start_code_block_regexp = qr{
+            ^
+            (?:
+                [«]
+                |
+                [<][<]
+            )
+            
+            (?:
+                \s+
+                ( \w+ )         # capture the optional language
+                [:]
+            )?
+            \s* \n
+                    
+            ( .* )              # capture the code
+                    
+            $
+        }sx;
+    
+    if ( $block =~ $start_code_block_regexp ) {
+        my $language = $1;
+        my $code     = $2;
+        
+        $metadata->{'code_found'} = 1;
+        
+        # remove the indent
+        $code =~ s{^ [ ]{4} }{}gmx;
+        
+        my $count = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
+        
+        $self->set_metadata( $CATEGORY, "code_${count}",     $code        );
+        $self->set_metadata( $CATEGORY, "language_${count}", $language    );
+        $self->set_metadata( $CATEGORY, 'in_code_block',     1            );
+        
+        return (
+                'code',
+                q(),
+            );
+    }
+    
+    return;
+}
+sub detect_block_cont {
+    my $self     = shift;
+    my $block    = shift;
+    my $previous = shift;
+    my $gap_hint = shift;
+    my $metadata = shift;
+    
+    return  if defined $metadata->{'code_found'};
+    
+    # empty blocks are not code
+    return  unless $block;
+    
+    # blocks in which all lines start with white space are still indented
+    my @lines       = split /\n/, $block;
+    my $space_count = $block =~ s{^ [ ] }{ }mgx;
+    return  if $space_count == ( $#lines + 1 );
+    
+    my $in_code = $self->get_metadata( $CATEGORY, 'in_code_block' ) || 0;
+    
+    if ( $in_code ) {
+        my $count   = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
+        my $stored  = $self->get_metadata( $CATEGORY, "code_${count}" );
+           $stored .= "\n${block}";
+
+        $self->set_metadata( $CATEGORY, "code_${count}", $stored );
+        
+        return (
+                'empty',
+                q(),
+            );
+    }
+    
+    return;
+}
+sub detect_block_end {
+    my $self     = shift;
+    my $block    = shift;
+    my $previous = shift;
+    my $gap_hint = shift;
+    my $metadata = shift;
+    
+    return  if defined $metadata->{'code_found'};
+    
+    my $end_code_block_regexp = qr{
+            ^
+            
+            ( .* )              # capture the remaining code
+            \n
+            
+            (?:
+                [»]
+                |
+                [>][>]
+            )
+            \s*
+            $
+        }sx;
+    
+    if ( $block =~ $end_code_block_regexp ) {
+        my $code = $1;
+        
+        # remove the indent
+        $code =~ s{^ [ ]{4} }{}gmx;
+        
+        my $count   = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
+        my $stored  = $self->get_metadata( $CATEGORY, "code_${count}" );
+           $stored .= "\n${code}\n";
+
+        $self->set_metadata( $CATEGORY, "code_${count}", $stored      );
+        $self->set_metadata( $CATEGORY, 'current_block', ($count + 1) );
+        $self->set_metadata( $CATEGORY, 'in_code_block', 0            );
+        
+        return (
+                'empty',
+                q(),
+            );
+    }
+    
     return;
 }
 

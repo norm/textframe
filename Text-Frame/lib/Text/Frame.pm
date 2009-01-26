@@ -252,6 +252,8 @@ sub decode_text_string {
     
     my $gap_hint = '';
     my @blocks;
+    
+    BLOCK:
     while ( $string =~ $decode_block ) {
         my $all_matched = $1;
         my $block       = $2;
@@ -266,16 +268,20 @@ sub decode_text_string {
         
         # strip away any outer "layers" of type hinting on the block, 
         # until you are left with just the actual text of the block
+        LAYER:
         while ( 'block' ne $block_type ) {
             ( $block_type, $new_block ) 
                 = $self->get_first_trigger_return( 
                       'detect_text_block', 
-                      $block, 
+                      $block,
                       $previous,
                       $gap_hint,
-                      \%metadata, 
+                      \%metadata,
                       \@context,
                   );
+            
+            # short cut to "ignore this block"
+            last LAYER if 'empty' eq $block_type;
             
             $has_indent = 1  if 'indent' eq $block_type;
             $block      = $new_block;
@@ -284,40 +290,42 @@ sub decode_text_string {
             push @context, $block_type;
         }
         
-        # reduce all white space as it is not significant
-        $block =~ s{  \s+            }{ }gsx;
-        $block =~ s{^ \s* (.*?) \s* $}{$1}gsx;
+        if ( 'empty' ne $block_type ) {
+            # reduce all white space as it is not significant
+            $block =~ s{  \s+            }{ }gsx;
+            $block =~ s{^ \s* (.*?) \s* $}{$1}gsx;
 
-        # parse the text for the inline elements
-        my @elements = $self->decode_inline_text( $block );
-        
-        # determine if the block contains only links: two clues are that 
-        # reference links have no indentation...
-        my $links_only = ( !$has_indent );
-        
-        # ... and that the entire block should contain 
-        # only empty strings and links 
-        TEST:
-        foreach my $element ( @elements ) {
-            my $type = $element->{'type'};
-            my $text = $element->{'text'};
-            
-            next TEST  if 'link' eq $type;
-            next TEST  if ( 'string' eq $type  
-                            && ( q() eq $text  ||  q( ) eq $text )
-                          );
-            
-            $links_only = 0;
-        }
-        
-        # reference links should not be treated as 
-        # an output block when parsing documents)        
-        if ( !$links_only ) {
-            push @blocks, {
-                    'context'  => \@context,
-                    'metadata' => \%metadata,
-                    'elements' => \@elements,
-                };
+            # parse the text for the inline elements
+            my @elements = $self->decode_inline_text( $block );
+
+            # determine if the block contains only links: two clues are that 
+            # reference links have no indentation...
+            my $links_only = ( !$has_indent );
+
+            # ... and that the entire block should contain 
+            # only empty strings and links 
+            TEST:
+            foreach my $element ( @elements ) {
+                my $type = $element->{'type'};
+                my $text = $element->{'text'};
+
+                next TEST  if 'link' eq $type;
+                next TEST  if ( 'string' eq $type  
+                                && ( q() eq $text  ||  q( ) eq $text )
+                              );
+
+                $links_only = 0;
+            }
+
+            # reference links should not be treated as 
+            # an output block when parsing documents)        
+            if ( !$links_only ) {
+                push @blocks, {
+                        'context'  => \@context,
+                        'metadata' => \%metadata,
+                        'elements' => \@elements,
+                    };
+            }
         }
         
         $gap_hint = $this_hint;
