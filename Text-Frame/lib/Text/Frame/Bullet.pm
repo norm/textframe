@@ -36,7 +36,7 @@ sub detect_text_block {
     my $first_indent_regexp = qr{ 
             ^ 
             ( 
-                [*o.-]      # an asterisk, letter o, period or hyphen
+                [*o.•-]     # an asterisk, letter o, period, bullet or hyphen
                 \s+         # spaces
             )
         }sx;
@@ -135,7 +135,7 @@ sub as_text {
     my $self    = shift;
     my $details = shift;
     
-    $details->{'first_line'} .= '*   ';
+    $details->{'first_line'} .= '•   ';
     $details->{'prefix'    } .= '    ';
     $details->{'right'     } -= 4;
 }

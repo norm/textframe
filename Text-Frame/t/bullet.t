@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 48;
+use Test::More      tests => 56;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -22,9 +22,9 @@ my $ref_doc;
 
 # test a simple two item bulleted list
 $document = <<END;
-    *   This document has a bulleted list.
+    •   This document has a bulleted list.
 
-    *   It has two items.
+    •   It has two items.
 
 END
 $html = <<HTML;
@@ -81,11 +81,142 @@ test_textframe( {
     } );
 
 
+# test different bullet symbols
+$document = <<END;
+    *   This document has a bulleted list.
+
+    o   It has five items.
+
+    .   Each uses a different symbol.
+
+    -   Textframe can mix and match symbols.
+
+    •   Generated documents will always use this symbol (middle dot).
+
+END
+$ref_doc = <<END;
+    •   This document has a bulleted list.
+
+    •   It has five items.
+
+    •   Each uses a different symbol.
+
+    •   Textframe can mix and match symbols.
+
+    •   Generated documents will always use this symbol (middle dot).
+
+END
+$html = <<HTML;
+<ul>
+  <li><p>This document has a bulleted list.</p></li>
+  <li><p>It has five items.</p></li>
+  <li><p>Each uses a different symbol.</p></li>
+  <li><p>Textframe can mix and match symbols.</p></li>
+  <li><p>Generated documents will always use this symbol (middle dot).</p></li>
+</ul>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'This document has a bulleted list.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'It has five items.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'Each uses a different symbol.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'Textframe can mix and match symbols.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'bullet',
+                'block',
+            ],
+            metadata => {
+                no_header => 1,
+            },
+            elements => [
+                {
+                    type => 'string',
+                    text => 'Generated documents will always use this symbol (middle dot).',
+                },
+            ],
+        },
+    );
+%links = ();
+@html_data = @{ dclone( \@data ) };
+foreach my $index ( 0 .. 4 ) {
+    $html_data[ $index ]{'metadata'} = {};
+}
+test_textframe( {
+        input      => $document,
+        text       => $ref_doc,
+        html       => $html,
+        data       => \@data,
+        html_data  => \@html_data,
+        links      => \%links,
+    } );
+
+
 # test that very simple lists don't become headers
 $document = <<END;
-    *   first item
+    •   first item
 
-    *   second item
+    •   second item
 
 END
 $html = <<HTML;
@@ -144,11 +275,11 @@ test_textframe( {
 
 # test that a paragraph between list items breaks it up
 $document = <<END;
-    *   This document has two bulleted lists.
+    •   This document has two bulleted lists.
 
         It has a paragraph between them.
 
-    *   Each list has one item.
+    •   Each list has one item.
 
 END
 $html = <<HTML;
@@ -225,11 +356,11 @@ test_textframe( {
 
 # test that sub lists work
 $document = <<END;
-    *   This document has a nested bulleted list.
+    •   This document has a nested bulleted list.
 
-        *   This is the sub item.
+        •   This is the sub item.
 
-    *   Back to the main list.
+    •   Back to the main list.
 
 END
 $html = <<HTML;
@@ -310,13 +441,13 @@ test_textframe( {
 
 # test that sub sub lists work
 $document = <<END;
-    *   This document has more nested bulleted lists.
+    •   This document has more nested bulleted lists.
 
-        *   This is the sub item.
+        •   This is the sub item.
 
-            *   This is the sub sub item.
+            •   This is the sub sub item.
 
-        *   Back to the sub list.
+        •   Back to the sub list.
 
 END
 $html = <<HTML;
@@ -421,25 +552,25 @@ test_textframe( {
 
 # fairly complex nested lists
 $document = <<END;
-    *   List item.
+    •   List item.
 
-        *   List item.
+        •   List item.
 
-            *   List item.
+            •   List item.
 
-                *   List item.
+                •   List item.
 
-    *   List item.
+    •   List item.
 
-        *   List item.
+        •   List item.
 
-        *   List item.
+        •   List item.
 
-            *   List item.
+            •   List item.
 
-        *   List item.
+        •   List item.
 
-    *   List item.
+    •   List item.
 
 END
 $html = <<HTML;

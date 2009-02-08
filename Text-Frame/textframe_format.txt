@@ -128,16 +128,19 @@ The textframe file format
 
         The bullet symbol is one of:
         
-    *   an asterisk (*)
+    *   asterisk (*)
         
-    *   a lowercase letter O (o)
+    *   lowercase letter O (o)
         
-    *   a period (.)
+    *   period (.)
         
-    *   a hyphen (-)
+    *   hyphen (-)
+        
+    *   unicode bullet (•)
+
         
         The symbol used does not affect the document in any way. Generated
-        textframe documents will always use an asterisk.
+        textframe documents will always use the unicode bullet (•).
         
         
         Numbered lists

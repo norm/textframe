@@ -141,17 +141,17 @@ test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 # 
 # test different types of quoted items - bullets
 $document = <<END;
-    >   *   List item
+    >   •   List item
     >
-    >   *   List item
+    >   •   List item
     >
     >   Paragraph?
     
 END
 $ref_doc = <<END;
-    >   *   List item
+    >   •   List item
     >   
-    >   *   List item
+    >   •   List item
     >   
     >   Paragraph?
 
