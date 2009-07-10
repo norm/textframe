@@ -46,7 +46,7 @@ sub detect_text_string {
                     |                   #   (/ is valid start for relative
                     [/]                 #   URLs, but is not matched above)
                 )
-                [^|>]+?                 #   (the rest of the URI)
+                [^|>]*?                 #   (the rest of the URI)
             )
             \s*
             [>]
@@ -214,6 +214,7 @@ sub as_html {
 
     if ( !$uri ) {
         $uri = $self->get_link( $text ) || '#BROKEN';
+        $uri =~ s{&}{&amp;}g;
     }
     
     $self->call_trigger( 'html_string_escape', \$text );

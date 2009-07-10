@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 48;
+use Test::More      tests => 64;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -99,6 +99,47 @@ test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
 
 # check relative links work
 $document = <<END;
+        A basic link to <the homepage | />.
+
+END
+$ref_doc = <<END;
+        A basic link to <the homepage>.
+
+<the homepage | />
+END
+$html = <<HTML;
+<p>A basic link to <a href='/'>the homepage</a>.</p>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'A basic link to ',
+                },
+                {
+                    type => 'link',
+                    text => 'the homepage',
+                },
+                {
+                    type => 'string',
+                    text => '.',
+                },
+            ],
+        },
+    );
+%links = (
+        'the homepage' => '/',
+    );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
+
+$document = <<END;
         A basic link to <another page | /some/other/page/>.
 
 END
@@ -175,6 +216,45 @@ HTML
     );
 %links = (
         'another page' => '/another-page',
+    );
+test_textframe( $document, $html, \@data, undef, \%links );
+
+
+# check that links with ampersands are correctly encoded
+$document = <<END;
+        A basic link to <some search page>.
+
+<some search page | /search?q=terms&submit=submit>
+END
+$html = <<HTML;
+<p>A basic link to <a href='/search?q=terms&amp;submit=submit'>some search page</a>.</p>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'A basic link to ',
+                },
+                {
+                    type => 'link',
+                    text => 'some search page',
+                },
+                {
+                    type => 'string',
+                    text => '.',
+                },
+            ],
+        },
+    );
+%links = (
+        'some search page' => '/search?q=terms&submit=submit',
     );
 test_textframe( $document, $html, \@data, undef, \%links );
 
