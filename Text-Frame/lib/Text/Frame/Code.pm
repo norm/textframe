@@ -170,9 +170,9 @@ sub detect_single_block {
         
         my $count = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
         
-        $self->set_metadata( $CATEGORY, "code_${count}",     $code        );
-        $self->set_metadata( $CATEGORY, "language_${count}", $language    );
-        $self->set_metadata( $CATEGORY, 'current_block',     ($count + 1) );
+        $self->set_metadata( $CATEGORY, "code_${count}",     $code          );
+        $self->set_metadata( $CATEGORY, "language_${count}", $language      );
+        $self->set_metadata( $CATEGORY, 'current_block',     ( $count + 1 ) );
         
         return (
                 'code',
@@ -257,7 +257,7 @@ sub detect_block_cont {
         my $count   = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
         my $stored  = $self->get_metadata( $CATEGORY, "code_${count}" );
            $stored .= "\n${block}";
-
+        
         $self->set_metadata( $CATEGORY, "code_${count}", $stored );
         
         return (
@@ -301,7 +301,7 @@ sub detect_block_end {
         my $count   = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
         my $stored  = $self->get_metadata( $CATEGORY, "code_${count}" );
            $stored .= "\n${code}\n";
-
+        
         $self->set_metadata( $CATEGORY, "code_${count}", $stored      );
         $self->set_metadata( $CATEGORY, 'current_block', ($count + 1) );
         $self->set_metadata( $CATEGORY, 'in_code_block', 0            );
@@ -336,7 +336,7 @@ sub start_html_code {
         }
         
         my $count = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
-        $self->set_metadata( $CATEGORY, "language_${count}", $language    );
+        $self->set_metadata( $CATEGORY, "language_${count}", $language );
         
         my %block = (
                 context => [
@@ -424,6 +424,8 @@ sub block_as_text {
     my $code     = $self->get_metadata( $CATEGORY, "code_${count}"     );
     my $language = $self->get_metadata( $CATEGORY, "language_${count}" );
     
+    $self->set_metadata( $CATEGORY, 'current_block', ($count + 1) );
+    
     my $indent = q( ) x 4;
     my $lang   = defined $language
                      ? " ${language}:" 
@@ -459,6 +461,9 @@ sub block_as_html {
     my $count     = $self->get_metadata( $CATEGORY, 'current_block'     );
     my $code      = $self->get_metadata( $CATEGORY, "code_${count}"     );
     my $language  = $self->get_metadata( $CATEGORY, "language_${count}" );
+    
+    $self->set_metadata( $CATEGORY, 'current_block', ( $count + 1 ) );
+
     my $lang_attr = defined $language
                         ? " class='${language}'" 
                         : q();
@@ -468,6 +473,7 @@ sub block_as_html {
     $details->{'no_paragraph'} = 1;
     push @{ $details->{'start_tags'} }, "<pre><code${lang_attr}>";
     push @{ $details->{'end_tags'} },   '</code></pre>';
+    
 }
 
 
