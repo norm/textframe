@@ -41,11 +41,9 @@ sub detect_text_string {
                 \s*
             )?
             (                           # capture the URI (also cannot start
-                (?:                     #   with a space or contain | or >
-                    [^\s\W>|]           
-                    |                   #   (/ is valid start for relative
-                    [/]                 #   URLs, but is not matched above)
-                )
+                                     #   with a space or contain | or >
+                    [^\s>|]           
+                
                 [^|>]*?                 #   (the rest of the URI)
             )
             \s*
@@ -79,24 +77,28 @@ sub detect_text_string {
         # white space within URIs is allowed in textframe source, but ignored
         $uri =~ s{\s}{}gs;
         
-        if ( $uri ) {
-            if ( $self->store_link( $text, $uri ) ) {
-                $uri = q();
+        # link text needs at least one alphanumeric, otherwise it is
+        # likely to be < and > used in punctuation/maths/programming
+        if ( $text =~ m{\w} ) {
+            if ( $uri ) {
+                if ( $self->store_link( $text, $uri ) ) {
+                    $uri = q();
+                }
             }
-        }
 
-        my %hash = (
-                type => 'link',
-                text => $text
-            );
-        
-        $hash{'uri'} = $uri  if q() ne $uri;
-        
-        return(
-                $before,
-                \%hash,
-                $after,
-            );
+            my %hash = (
+                    type => 'link',
+                    text => $text
+                );
+
+            $hash{'uri'} = $uri  if q() ne $uri;
+
+            return(
+                    $before,
+                    \%hash,
+                    $after,
+                );
+        }
     }
     
     return;

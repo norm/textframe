@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More      tests => 64;
+use Test::More      tests => 72;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -350,3 +350,48 @@ HTML
         'The Google Homepage' => 'http://www.google.com/',
     );
 test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );
+
+
+
+# test links with braces are correctly parsed
+$document = <<END;
+        Tuesdays and Thursdays are when we have our <(not so) super-secret
+        meetings> at work, so I have to go out early to grab a sandwich or
+        miss out on lunch.
+
+<(not so) super-secret meetings |
+http://twitter.com/cackhanded/statuses/2630813
+>
+END
+$html = <<HTML;
+<p>Tuesdays and Thursdays are when we have our <a href='http://twitter.com/cackhanded/statuses/2630813'>(not so) super-secret meetings</a> at work, so I have to go out early to grab a sandwich or miss out on lunch.</p>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'Tuesdays and Thursdays are when we have our ',
+                },
+                {
+                    type => 'link',
+                    text => '(not so) super-secret meetings',
+                },
+                {
+                    type => 'string',
+                    text => ' at work, so I have to go out early to grab a sandwich or miss out on lunch.',
+                },
+            ],
+        },
+    );
+%links = (
+        '(not so) super-secret meetings' 
+            => 'http://twitter.com/cackhanded/statuses/2630813',
+    );
+test_textframe( $document, $html, \@data, undef, \%links );
