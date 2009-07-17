@@ -3,7 +3,7 @@ use warnings;
 
 use charnames qw( :full );
 
-use Test::More      tests => 40;
+use Test::More      tests => 48;
 require 't/testing.pl';
 
 use Storable        qw( dclone );
@@ -20,7 +20,7 @@ my %html_links;
 my $ref_doc;
 
 
-# test basic referential links
+# test basic referential # links
 $document = <<END;
         This document has a link to the <Google> search engine. But the URI of
         the link is postponed until later for readability.
@@ -328,4 +328,92 @@ test_textframe( {
         data           => \@data,
         links          => \%links,
         html_links     => \%html_links,
+    } );
+
+
+# test that html links with the same name but different whitespace are 
+# not seen as different (but then end up being the same when converted to
+# textframe and back to HTML)
+$document = <<END;
+        This block links to the <Google homepage>.
+
+        This block also links to the <Google 
+        homepage>.
+
+<Google homepage | http://www.google.com/>
+END
+$ref_doc = <<END;
+        This block links to the <Google homepage>.
+
+        This block also links to the <Google homepage>.
+
+<Google homepage | http://www.google.com/>
+END
+$html = <<HTML;
+<p>This block links to the <a href='http://www.google.com/'>Google homepage</a>.</p>
+<p>This block also links to the <a href='http://www.google.com/'>Google homepage</a>.</p>
+HTML
+my $check_html = <<HTML;
+<p>This block links to the <a href='http://www.google.com/'>Google homepage</a>.</p>
+<p>This block also links to the <a 
+    href='http://www.google.com/'>Google 
+    homepage</a>.</p>
+
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'This block links to the ',
+                },
+                {
+                    type => 'link',
+                    text => 'Google homepage',
+                },
+                {
+                    type => 'string',
+                    text => '.'
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'This block also links to the ',
+                },
+                {
+                    type => 'link',
+                    text => 'Google homepage',
+                },
+                {
+                    type => 'string',
+                    text => '.'
+                },
+            ],
+        },
+    );
+%links       = (
+        "Google homepage" => 'http://www.google.com/',
+    );
+test_textframe( {
+        input      => $document,
+        text       => $ref_doc,
+        html       => $html,
+        html_input => $check_html,
+        data       => \@data,
+        links      => \%links,
     } );

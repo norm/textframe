@@ -136,9 +136,13 @@ sub end_html_link {
     my $block    = $insert->[$#$insert];
     my $contents = $block->{'contents'};
     
-    $block->{'text'} = $self->block_as_text( undef, @{ $contents } );
+    # rationalise whitespace
+    my $text  = $self->block_as_text( undef, @{ $contents } );
+       $text =~ s{\s+}{ }gs;
     
-    if ( $self->store_link( $block->{'text'}, $block->{'uri'} ) ) {
+    $block->{'text'} = $text;
+       
+    if ( $self->store_link( $text, $block->{'uri'} ) ) {
         delete $block->{'uri'};
     }
     
