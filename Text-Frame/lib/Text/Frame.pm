@@ -9,7 +9,7 @@ use version;            our $VERSION = qv( '0.5.5' );
 use Class::Trigger;
 use Encode;
 use HTML::Parser;
-use IO::All -utf8;
+use IO::All             -utf8;
 use Module::Pluggable   require     => 1,
                         search_path => "Text::Frame";
 use Readonly;
@@ -337,6 +337,10 @@ sub decode_text_string {
 sub decode_inline_text {
     my $self = shift;
     my $text = shift;
+    
+    # exceptionally long lists of links at the end of a document
+    # can trigger recursion warnings, but they are not problems
+    no warnings 'recursion';
     
     my( $start, $data, $end ) = $self->get_first_element_match( $text );
     my @elements;
