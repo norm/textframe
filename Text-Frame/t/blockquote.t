@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 56;
+use Test::More      tests => 72;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -22,6 +22,30 @@ my $ref_doc;
 
 # TODO
 # do we need to test the structures of the sub-frames?
+
+
+
+# test a single line
+$document = <<END;
+    >   Hello world.
+
+END
+$html = <<HTML;
+<blockquote><p>Hello world.</p></blockquote>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'blockquote',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        },
+    );
+%links = ();
+test_textframe( $document, $html, \@data, undef, \%links );
 
 
 
@@ -233,6 +257,9 @@ $html_text = <<END;
     >   bullets, glyphs or numbers sit in the gutter to highlight the list.
     >   This representation of a list is more sophisticated visually and
     >   more legible.
+    >   
+    >   <Mark Boulton’s Five Simple Steps | #BROKEN>
+    >   
 
 END
 $html = <<HTML;
@@ -288,3 +315,38 @@ HTML
         'http://quoted.com/' => 'http://quoted.com/'
     );
 test_textframe( $document, $html, \@data, undef, \%links );
+
+
+# links in quoted passages should work
+# TODO - pull reference links out of quoted areas
+$document = <<END;
+    >   Something quoted about <Google>.
+    >
+
+<Google | http://www.google.com/>
+END
+$ref_doc = <<END;
+    >   Something quoted about <Google>.
+    >   
+    >   <Google | http://www.google.com/>
+    >   
+
+END
+$html = <<HTML;
+<blockquote><p>Something quoted about <a href='http://www.google.com/'>Google</a>.</p></blockquote>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'blockquote',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        },
+    );
+%links = (
+        'Google' => 'http://www.google.com/'
+    );
+test_textframe( $document, $html, \@data, undef, \%links, $ref_doc );

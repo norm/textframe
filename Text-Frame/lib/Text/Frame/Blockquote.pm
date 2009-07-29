@@ -44,19 +44,17 @@ sub detect_text_block {
     
     my $find_quote_regexp = qr{
             ^
-            (?:
-                [>]             # quote is a greater-than symbol
-                [ ]{3}          #   three spaces (to make it a full indent)
-                
-                |               # or
-                
-                From            # citation line
+            (?:                 # optional citation line
+                From
                 \s+
                 [<] 
                 ( [^>]+ )       # capture the link
                 [>][:]
                 \s*
-            )
+                \n
+            )?
+            [>]             # quote is a greater-than symbol
+            [ ]{3}          #   three spaces (to make it a full indent)
         }sx;
     my $strip_quote_regexp = qr{
             ^
@@ -71,13 +69,16 @@ sub detect_text_block {
             )
         }mx;
     
-    if ( $block =~ s{$find_quote_regexp}{}x ) {
+    if ( $block =~ s{$find_quote_regexp}{>   }x ) {
         my $uri = $1;
         
         return  unless $block =~ s{$strip_quote_regexp}{    }g;
         
         my $current = $self->get_metadata( $CATEGORY, 'current' ) + 1;
-        my $frame = Text::Frame->new( string => $block );
+        my $frame = Text::Frame->new( 
+                string => $block,
+                links  => $self->get_links(),
+            );
         
         $self->set_metadata( $CATEGORY, "quote_${current}", $frame    );
         $self->set_metadata( $CATEGORY, 'current',          $current  );
@@ -152,7 +153,8 @@ sub end_html_blockquote {
     
     if ( defined $details->{'blockquote'}{ $counter } ) {
         my $frame = Text::Frame->new( 
-                blocks => $details->{'blockquote'}{ $counter } 
+                blocks => $details->{'blockquote'}{ $counter },
+                links => $self->get_links(),
             );
         
         my $current = $self->get_metadata( $CATEGORY, 'current' );
@@ -184,7 +186,10 @@ sub as_text {
     my $frame     = $self->get_metadata( $CATEGORY, "quote_$current" );
     my $citation  = $self->get_metadata( $CATEGORY, "cite_$current"  );
     my $depth     = $details->{'blockquote_depth'} || 0;
-    my $text      = $frame->as_text( blockquote_depth => $depth + 1 );
+    my $text      = $frame->as_text( 
+            blockquote_depth   => $depth + 1,
+            no_reference_links => 1,
+        );
 
     # remove the first indent from the generated document
     $text =~ s{^ [ ]{4} }{}gmx;
