@@ -3,7 +3,7 @@ use warnings;
 
 use utf8;
 
-use Test::More      tests => 24;
+use Test::More      tests => 28;
 require 't/testing.pl';
 
 use Text::Frame;
@@ -314,4 +314,63 @@ test_textframe( {
         data            => \@data,
         links           => \%links,
         skip_html_tests => 1,
+    } );
+
+
+# test multiple raw blocks
+$document = <<END;
+    |   <div>
+
+        Wrapping a div around a paragraph.
+
+    |   </div>
+
+END
+$html = <<HTML;
+<div>
+<p>Wrapping a div around a paragraph.</p>
+</div>
+HTML
+@data = (
+        {
+            context => [
+                'indent',
+                'raw',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        },
+        {
+            context => [
+                'indent',
+                'indent',
+                'block',
+            ],
+            metadata => {},
+            elements => [
+                {
+                    type => 'string',
+                    text => 'Wrapping a div around a paragraph.',
+                },
+            ],
+        },
+        {
+            context => [
+                'indent',
+                'raw',
+                'block',
+            ],
+            metadata => {},
+            elements => [],
+        },
+    );
+%links = ();
+test_textframe( {
+        input           => $document,
+        text            => $document,
+        html            => $html,
+        data            => \@data,
+        links           => \%links,
+        skip_html_tests => 1,       # no support for raw in html sources
     } );

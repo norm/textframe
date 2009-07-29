@@ -49,6 +49,7 @@ sub detect_block_raw {
         
         # store the raw block away, otherwise it will be reformatted
         $self->set_metadata( $CATEGORY, $count, $block );
+        $self->set_metadata( $CATEGORY, 'current_block', $count+1 );
         
         return (
                 'raw',
@@ -113,8 +114,9 @@ sub block_as_text {
     my $self    = shift;
     my $details = shift;
     
-    my $count     = $self->get_metadata( $CATEGORY, 'current_block' );
+    my $count     = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
     my $raw_block = $self->get_metadata( $CATEGORY, $count          );
+    $self->set_metadata( $CATEGORY, 'current_block', $count+1 );
     
     $details->{'first_line'} .= q(|   );
     $details->{'prefix'    } .= q(|   );
@@ -134,8 +136,9 @@ sub block_as_html {
     my $self        = shift;
     my $details     = shift;
     
-    my $count     = $self->get_metadata( $CATEGORY, 'current_block' );
+    my $count     = $self->get_metadata( $CATEGORY, 'current_block' ) || 1;
     my $raw_block = $self->get_metadata( $CATEGORY, $count          );
+    $self->set_metadata( $CATEGORY, 'current_block', $count+1 );
     
     $details->{'text'        } = $raw_block;
     $details->{'no_paragraph'} = 1;
