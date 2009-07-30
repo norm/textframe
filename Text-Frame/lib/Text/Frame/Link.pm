@@ -60,12 +60,17 @@ sub detect_text_string {
         my $uri    = $3;
         my $after  = $4;
         
+        # a link shouldn't match a <<code>> sample
+        my $is_actually_code = ( $uri =~ m{^ < }x )
+                            && ( $after =~ m{^ > }x );
+        return  if $is_actually_code;
+        
+        # if the URI is not actually a URI, assume it is link text
+        # that is shared with another link which does specify the URI
         my $uri_has_protocol = ( $uri =~ m{^ \w+ [:][/][/] }x );
         my $uri_is_relative  = ( $uri =~ m{^ [.]? [/]      }x );
         my $is_uri           = $uri_has_protocol || $uri_is_relative;
         
-        # if the URI is not actually a URI, assume it is link text
-        # that is shared with another link which does specify the URI
         if ( !$is_uri ) {
             $text = $uri;
             $uri  = '';
